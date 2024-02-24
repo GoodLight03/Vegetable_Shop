@@ -45,12 +45,11 @@ public class ClientController {
     }
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
+      Users uskt = us.findByUsername(principal.getName());
+      List<Role> rl = uskt.getRoles();
       if (rl.size() == 1) {
         model.addAttribute("rolelogin", rl.get(0).getName());
       }
-
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("type", courses);
@@ -196,22 +195,6 @@ public class ClientController {
     model.addAttribute("product", productbs);
 
     return "detail";
-  }
-
-  @GetMapping("/cart")
-  public String cr(Model model, Principal principal, Authentication authentication) {
-    if (principal != null) {
-      model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
-      }
-
-    }
-    List<Type> courses = usk.findAll();
-    model.addAttribute("courses", courses);
-    return "cart";
   }
 
   @GetMapping("/checkout")

@@ -20,4 +20,6 @@ public interface ProductService {
     Optional<Product> findById(Long id);
 
     Product update(MultipartFile imageProduct, ProductDto productDto);
+
+    ProductDto getById(Long id);
 }

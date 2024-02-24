@@ -1,5 +1,8 @@
 package com.shop.vegetable.entity;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -19,7 +23,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "products", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
+@Table(name = "products"
+// , uniqueConstraints = @UniqueConstraint(columnNames = { "name" })
+)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +43,12 @@ public class Product {
     @JoinColumn(name = "type_id", referencedColumnName = "type_id")
     private Type type;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<OrderDetail> orderDetailList;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<CartItem> cartiterms;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<Comment> comments;
 }

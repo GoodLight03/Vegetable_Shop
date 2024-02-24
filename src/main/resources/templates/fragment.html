@@ -82,6 +82,9 @@
                         <div class="nav-item dropdown" th:if="${rolelogin}==CUSTOMER">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="${namelogin}"></a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a href="/orders" class="dropdown-item">My-Order</a>
+                                <a href="/profile" class="dropdown-item">Profile</a>
+                                <a href="/change-password" class="dropdown-item">Change-Password</a>
                                 <a href="/logout" class="dropdown-item">Logout</a>
                             </div>
                         </div>
@@ -94,11 +97,11 @@
                             class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
                             data-bs-toggle="modal" data-bs-target="#searchModal"><i
                                 class="fas fa-search text-primary"></i></button>
-                        <a th:if="${rolelogin}==CUSTOMER" href="/cart" class="position-relative me-4 my-auto">
+                        <a th:if="${rolelogin}==CUSTOMER" th:href="@{/carts}" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <span
                                 class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
-                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
+                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;" th:text="${session.totalItems == null} ? '0' : ${session.totalItems}"></span>
                         </a>
                     </div>
                 </div>

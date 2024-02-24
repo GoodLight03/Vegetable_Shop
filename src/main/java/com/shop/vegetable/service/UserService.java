@@ -16,4 +16,10 @@ public interface UserService {
     // List<Users> findGV();
 
     Users saveAD();
+
+    UserDto getCustomer(String username);
+
+    Users update(UserDto dto);
+
+    Users changePass(UserDto customerDto);
 }

@@ -16,7 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "userss",uniqueConstraints = @UniqueConstraint(columnNames = "username"))
+@Table(name = "userss"
+// ,uniqueConstraints = @UniqueConstraint(columnNames = "username")
+)
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +35,13 @@ public class Users {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
     private List<Role> roles;
 
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
+    private ShoppingCart cart;
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private List<Order> orders;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
+    private List<Comment> comments;
 
 }

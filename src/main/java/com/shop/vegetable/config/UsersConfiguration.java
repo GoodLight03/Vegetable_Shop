@@ -45,7 +45,7 @@ public class UsersConfiguration {
                 .authorizeHttpRequests( author ->
                         author.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 //.requestMatchers("/home").permitAll()
-                                .requestMatchers("/cart","/checkout").hasAuthority("CUSTOMER")
+                                .requestMatchers("/carts","/check-out").hasAuthority("CUSTOMER")
                                 .requestMatchers("/","/forgot-password", "/register", "/register-new","/contact","/shop","/detail").permitAll()
                                 .requestMatchers("/user","/type","/eclass","/schedule","/admin").hasAuthority("ADMIN")
                                 .anyRequest().authenticated()

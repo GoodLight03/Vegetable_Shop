@@ -98,4 +98,17 @@ public class ProductServiceImple implements ProductService {
         }
     }
 
+    @Override
+    public ProductDto getById(Long id) {
+        ProductDto productDto = new ProductDto();
+        Product product = ProductRepository.getById(id);
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        productDto.setDescription(product.getDescription());
+        productDto.setPrice(product.getPrice());
+        productDto.setType(product.getType());
+        productDto.setImage(product.getImage());
+        return productDto;
+    }
+
 }

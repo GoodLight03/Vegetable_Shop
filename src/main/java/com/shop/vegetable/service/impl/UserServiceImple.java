@@ -56,14 +56,32 @@ public class UserServiceImple implements UserService{
         return userRepository.findALl();
     }
 
-    // @Override
-    // public Users findByUsers(String name) {
-    //     return userRepository.findByUsers(name);
-    // }
+    @Override
+    public UserDto getCustomer(String username) {
+        UserDto customerDto = new UserDto();
+        Users customer = userRepository.findByUsername(username);
+        customerDto.setUsername(customer.getUsername());
+        customerDto.setPassword(customer.getPassword());
+        customerDto.setAddress(customer.getAddress());
+        customerDto.setPhone(customer.getPhone());
+        return customerDto;
+    }
 
-    // @Override
-    // public List<Users> findGV() {
-    //     return userRepository.findIdGV();
-    // }
+    @Override
+    public Users update(UserDto dto) {
+        Users customer = userRepository.findByUsername(dto.getUsername());
+        //customer.setId(customer.getId());
+        //customer.setUsername(dto.getUsername());
+        customer.setAddress(dto.getAddress());
+        customer.setPhone(dto.getPhone());
+        return userRepository.save(customer);
+    }
+
+    @Override
+    public Users changePass(UserDto customerDto) {
+        Users customer = userRepository.findByUsername(customerDto.getUsername());
+        customer.setPassword(customerDto.getPassword());
+        return userRepository.save(customer);
+    }
 
 }
