@@ -1,8 +1,15 @@
 package com.shop.vegetable.service;
 
+import java.util.List;
+
+import com.shop.vegetable.dto.CommentDto;
+import com.shop.vegetable.entity.Comment;
 import com.shop.vegetable.entity.Order;
-import com.shop.vegetable.entity.ShoppingCart;
 
 public interface CommentService {
-    Order save(ShoppingCart shoppingCart);
+    Comment save(CommentDto commentdto);
+
+    List<Comment> findAll(Long id);
+
+    void deletComment(Long id);
 }

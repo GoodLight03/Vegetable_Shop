@@ -106,6 +106,12 @@ public class OrderController {
             for (Order ordd : orderList) {
                 totalPrice+=ordd.getTotalPrice();
             }
+
+            int quantitys=0;
+            for (Order ordd : orderList) {
+                quantitys+=ordd.getQuantity();
+            }
+            model.addAttribute("quantitys", quantitys);
             model.addAttribute("totalPrice", totalPrice);
             model.addAttribute("orders", orderList);
             model.addAttribute("title", "Order");

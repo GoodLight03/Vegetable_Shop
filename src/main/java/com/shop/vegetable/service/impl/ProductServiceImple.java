@@ -111,4 +111,10 @@ public class ProductServiceImple implements ProductService {
         return productDto;
     }
 
+    @Override
+    public Product getByIdNotDto(Long id) {
+        // TODO Auto-generated method stub
+        return  ProductRepository.getById(id);
+    }
+
 }

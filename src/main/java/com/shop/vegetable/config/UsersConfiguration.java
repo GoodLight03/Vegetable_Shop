@@ -48,7 +48,8 @@ public class UsersConfiguration {
                                 .requestMatchers("/carts","/check-out").hasAuthority("CUSTOMER")
                                 .requestMatchers("/","/forgot-password", "/register", "/register-new","/contact","/shop","/detail").permitAll()
                                 .requestMatchers("/user","/type","/eclass","/schedule","/admin").hasAuthority("ADMIN")
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+                                //.anyRequest().authenticated()
 
                 )
                 .formLogin(login ->

@@ -22,4 +22,6 @@ public interface ProductService {
     Product update(MultipartFile imageProduct, ProductDto productDto);
 
     ProductDto getById(Long id);
+
+    Product getByIdNotDto(Long id);
 }

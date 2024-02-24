@@ -48,6 +48,7 @@
         <div class="container py-5">
             <div class="row g-4 mb-5">
                 <div class="col-lg-8 col-xl-9">
+
                     <div class="row g-4">
                         <div class="col-lg-6">
                             <div class="border rounded">
@@ -58,36 +59,43 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <h4 class="fw-bold mb-3" th:text="*{product.name}"></h4>
-                            <p class="mb-3" th:text="'Category: '+*{product.type.name}"></p>
-                            <h5 class="fw-bold mb-3" th:text="*{product.price}+'$'"></h5>
-                            <div class="d-flex mb-4">
-                                <i class="fa fa-star text-secondary"></i>
-                                <i class="fa fa-star text-secondary"></i>
-                                <i class="fa fa-star text-secondary"></i>
-                                <i class="fa fa-star text-secondary"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <p class="mb-4" th:text="*{product.description}"></p>
-                            <p class="mb-4">The generated Lorem Ipsum is therefore always free from repetition injected
-                                humour, or non-characteristic words etc.</p>
-                            <p class="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock flounder;
-                                chain pickerel hatchetfish, pencilfish snailfish</p>
-                            <div class="input-group quantity mb-5" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
+                            <form th:action="@{/add-to-cart}" method="post">
+                                <h4 class="fw-bold mb-3" th:text="*{product.name}"></h4>
+                                <p class="mb-3" th:text="'Category: '+*{product.type.name}"></p>
+                                <h5 class="fw-bold mb-3" th:text="*{product.price}+'$'"></h5>
+                                <div class="d-flex mb-4">
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
                                 </div>
-                                <input type="text" class="form-control form-control-sm text-center border-0" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i
-                                    class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <p class="mb-4" th:text="*{product.description}"></p>
+                                <p class="mb-4">The generated Lorem Ipsum is therefore always free from repetition
+                                    injected
+                                    humour, or non-characteristic words etc.</p>
+                                <p class="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock
+                                    flounder;
+                                    chain pickerel hatchetfish, pencilfish snailfish</p>
+                                <!-- <div class="input-group quantity mb-5" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm text-center border-0"
+                                        value="1">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div> -->
+                                <input type="hidden" th:value="${product.id}" name="id" class="form-control">
+                                <button type="submit"
+                                    class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i
+                                        class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</button>
+                            </form>
                         </div>
                         <div class="col-lg-12">
                             <nav>
@@ -164,44 +172,25 @@
                                 </div>
                                 <div class="tab-pane" id="nav-mission" role="tabpanel"
                                     aria-labelledby="nav-mission-tab">
-                                    <div class="d-flex">
+                                    <div class="d-flex" th:each="cm: ${lstcomment}">
                                         <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3"
                                             style="width: 100px; height: 100px;" alt="">
                                         <div class="">
-                                            <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
+                                            <p class="mb-2" style="font-size: 14px;" th:text="${cm.commentDate}"></p>
                                             <div class="d-flex justify-content-between">
-                                                <h5>Jason Smith</h5>
-                                                <div class="d-flex mb-3">
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star"></i>
+                                                <h5 style="width: 200px;" th:text="${cm.users.username}"></h5>
+                                                <div style="margin-left: 500px;" class="d-flex mb-3">
+                                                    <span th:each="starNumber : ${#numbers.sequence(1, 5)}">
+                                                        <i
+                                                            th:class="${starNumber &lt;= cm.start ? 'fa fa-star text-secondary' : 'fa fa-star'}"></i>
+                                                    </span>
                                                 </div>
                                             </div>
-                                            <p>The generated Lorem Ipsum is therefore always free from repetition
-                                                injected humour, or non-characteristic
-                                                words etc. Susp endisse ultricies nisi vel quam suscipit </p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex">
-                                        <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3"
-                                            style="width: 100px; height: 100px;" alt="">
-                                        <div class="">
-                                            <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-                                            <div class="d-flex justify-content-between">
-                                                <h5>Sam Peters</h5>
-                                                <div class="d-flex mb-3">
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star text-secondary"></i>
-                                                    <i class="fa fa-star"></i>
-                                                    <i class="fa fa-star"></i>
-                                                </div>
-                                            </div>
-                                            <p class="text-dark">The generated Lorem Ipsum is therefore always free from
-                                                repetition injected humour, or non-characteristic
-                                                words etc. Susp endisse ultricies nisi vel quam suscipit </p>
+                                            <p th:text="${cm.content}"></p>
+                                            <p  th:if="${rolelogin}==ADMIN">
+                                                <a th:href="@{/delete-comment(id = ${cm.id})}" class=" btn btn-danger">Delete</a>
+                                            </p>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -215,30 +204,34 @@
                                 </div>
                             </div>
                         </div>
-                        <form action="#">
+                        <form th:action="@{/save-comment}" method="post" th:object="${commentDto}">
                             <h4 class="mb-5 fw-bold">Leave a Reply</h4>
                             <div class="row g-4">
-                                <div class="col-lg-6">
+
+                                <div style="display: none;" class="col-lg-6">
                                     <div class="border-bottom rounded">
-                                        <input type="text" class="form-control border-0 me-4" placeholder="Yur Name *">
+                                        <input type="text" class="form-control border-0 me-4" placeholder="Yur Name *"
+                                            th:value="${product.id}" name="idd">
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <!-- <div class="col-lg-6">
                                     <div class="border-bottom rounded">
                                         <input type="email" class="form-control border-0" placeholder="Your Email *">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-lg-12">
                                     <div class="border-bottom rounded my-4">
-                                        <textarea name="" id="" class="form-control border-0" cols="30" rows="8"
-                                            placeholder="Your Review *" spellcheck="false"></textarea>
+                                        <textarea name="content" class="form-control border-0" cols="30" rows="8"
+                                            placeholder="Your Review *" spellcheck="false"
+                                            th:field="*{content}"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="d-flex justify-content-between py-3 mb-5">
                                         <div class="d-flex align-items-center">
-                                            <p class="mb-0 me-3">Please rate:<input type="text" id="quantity" value="0"
-                                                    readonly></p>
+                                            <p style="display: none;" class="mb-0 me-3">Please rate:<input type="text"
+                                                    id="quantity" value="0" readonly th:field="*{start}"></p>
+                                            <p class="mb-0 me-3">Please rate:</p>
                                             <div class="d-flex align-items-center" style="font-size: 12px;">
                                                 <i class="fa fa-star text-muted" onclick="changeStarColor(this)"></i>
                                                 <i class="fa fa-star text-muted" onclick="changeStarColor(this)"></i>
@@ -247,9 +240,9 @@
                                                 <i class="fa fa-star text-muted" onclick="changeStarColor(this)"></i>
                                             </div>
                                         </div>
-                                        <a href="#"
+                                        <button type="submit"
                                             class="btn border border-secondary text-primary rounded-pill px-4 py-3">
-                                            Post Comment</a>
+                                            Post Comment</button>
                                     </div>
                                 </div>
                             </div>
