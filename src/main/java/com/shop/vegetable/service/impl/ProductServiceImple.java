@@ -1,9 +1,14 @@
 package com.shop.vegetable.service.impl;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -115,6 +120,57 @@ public class ProductServiceImple implements ProductService {
     public Product getByIdNotDto(Long id) {
         // TODO Auto-generated method stub
         return  ProductRepository.getById(id);
+    }
+
+    @Override
+    public Page<ProductDto> searchProducts(int pageNo, String keyword) {
+        List<Product> products = ProductRepository.findAllByNameOrDescription(keyword);
+        List<ProductDto> productDtoList = transferData(products);
+        Pageable pageable = PageRequest.of(pageNo, 5);
+        Page<ProductDto> dtoPage = toPage(productDtoList, pageable);
+        return dtoPage;
+    }
+
+    @Override
+    public List<ProductDto> allProduct() {
+        List<Product> products = ProductRepository.findAll();
+        List<ProductDto> productDtos = transferData(products);
+        return productDtos;
+    }
+
+    @Override
+    public Page<ProductDto> getAllProducts(int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 6);
+        List<ProductDto> productDtoLists = this.allProduct();
+        Page<ProductDto> productDtoPage = toPage(productDtoLists, pageable);
+        return productDtoPage;
+    }
+
+    private Page toPage(List list, Pageable pageable) {
+        if (pageable.getOffset() >= list.size()) {
+            return Page.empty();
+        }
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = ((pageable.getOffset() + pageable.getPageSize()) > list.size())
+                ? list.size()
+                : (int) (pageable.getOffset() + pageable.getPageSize());
+        List subList = list.subList(startIndex, endIndex);
+        return new PageImpl(subList, pageable, list.size());
+    }
+
+    private List<ProductDto> transferData(List<Product> products) {
+        List<ProductDto> productDtos = new ArrayList<>();
+        for (Product product : products) {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(product.getId());
+            productDto.setName(product.getName());
+            productDto.setPrice(product.getPrice());
+            productDto.setDescription(product.getDescription());
+            productDto.setImage(product.getImage());
+            productDto.setType(product.getType());
+            productDtos.add(productDto);
+        }
+        return productDtos;
     }
 
 }

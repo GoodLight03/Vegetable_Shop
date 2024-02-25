@@ -3,6 +3,7 @@ package com.shop.vegetable.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.vegetable.dto.ProductDto;
@@ -24,4 +25,10 @@ public interface ProductService {
     ProductDto getById(Long id);
 
     Product getByIdNotDto(Long id);
+
+    Page<ProductDto> searchProducts(int pageNo, String keyword);
+
+    Page<ProductDto> getAllProducts(int pageNo);
+
+    List<ProductDto> allProduct();
 }

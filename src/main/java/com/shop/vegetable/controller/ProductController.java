@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,9 +40,13 @@ public class ProductController {
     private final UserService us;
 
     @RequestMapping("/product")
-    public String lst(Model model) {
+    public String lst(Model model,Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("title", "Manage Level");
-        List<Product> level = lv.findAll();
+        //List<Product> level = lv.findAll();
+        List<ProductDto> level = lv.allProduct();
         List<Type> course = cs.findAll();
         model.addAttribute("level", level);
         model.addAttribute("course", course);
@@ -49,6 +54,20 @@ public class ProductController {
         model.addAttribute("levelDto", new ProductDto());
         return "product";
 
+    }
+
+    @GetMapping("/product/{pageNo}")
+    public String allProducts(@PathVariable("pageNo") int pageNo, Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        Page<ProductDto> products = lv.getAllProducts(pageNo);
+        model.addAttribute("title", "Manage Products");
+        model.addAttribute("size", products.getSize());
+        model.addAttribute("level", products);
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", products.getTotalPages());
+        return "product";
     }
 
     @RequestMapping("/search_probytype")
@@ -173,5 +192,25 @@ public class ProductController {
         }
         return "redirect:/product";
     }
+
+    @GetMapping("/search-products/{pageNo}")
+    public String searchProduct(@PathVariable("pageNo") int pageNo,
+                                @RequestParam(value = "keyword") String keyword,
+                                Model model, Principal principal
+    ) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        Page<ProductDto> products = lv.searchProducts(pageNo, keyword);
+        model.addAttribute("title", "Result Search Products");
+        model.addAttribute("size", products.getSize());
+        model.addAttribute("products", products);
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", products.getTotalPages());
+        return "product-result";
+
+    }
+
+
 
 }

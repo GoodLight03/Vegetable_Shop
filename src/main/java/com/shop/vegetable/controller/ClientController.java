@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -168,21 +170,25 @@ public class ClientController {
   }
 
   @GetMapping("/shop")
-  public String sh(Model model, Principal principal, Authentication authentication) {
+  public String sh( int pageNo,Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
+      Users uskh = us.findByUsername(principal.getName());
+      List<Role> rl = uskh.getRoles();
       if (rl.size() == 1) {
         model.addAttribute("rolelogin", rl.get(0).getName());
       }
-
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("type", courses);
 
-    List<Product> products = prd.findAll();
+    // List<Product> products = prd.findAll();
+    //List<ProductDto> products = prd.allProduct();
+    Page<ProductDto> products = prd.getAllProducts(pageNo);
+    model.addAttribute("currentPage", pageNo);
+    model.addAttribute("totalPages", products.getTotalPages());
     model.addAttribute("product", products);
+
     return "shop";
   }
 
@@ -208,11 +214,10 @@ public class ClientController {
       }
     }
 
-    List<Comment> lstcm=cm.findAll(productbs.getId());
+    List<Comment> lstcm = cm.findAll(productbs.getId());
     model.addAttribute("lstcomment", lstcm);
     model.addAttribute("product", productbs);
     model.addAttribute("commentDto", new CommentDto());
-    
 
     return "detail";
   }
@@ -234,37 +239,38 @@ public class ClientController {
   }
 
   @PostMapping("/save-comment")
-    public String addLevel(@RequestParam("idd") Long idd, @ModelAttribute("commentDto") CommentDto commentDto,
-            RedirectAttributes redirectAttributes, Principal principal,HttpServletRequest request) {
-        try {
-            Users usk = us.findByUsername(principal.getName());
-            Product product = prd.getByIdNotDto(idd);
-            commentDto.setUsers(usk);
-            commentDto.setCommentDate(new Date());
-            commentDto.setProduct(product);
-            cm.save(commentDto);
-            //redirectAttributes.addFlashAttribute("success", "Add new level successfully!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Failed to add new level!");
-        }
-        return "redirect:" + request.getHeader("Referer");
-
+  public String addLevel(@RequestParam("idd") Long idd, @ModelAttribute("commentDto") CommentDto commentDto,
+      RedirectAttributes redirectAttributes, Principal principal, HttpServletRequest request) {
+    try {
+      Users usk = us.findByUsername(principal.getName());
+      Product product = prd.getByIdNotDto(idd);
+      commentDto.setUsers(usk);
+      commentDto.setCommentDate(new Date());
+      commentDto.setProduct(product);
+      cm.save(commentDto);
+      // redirectAttributes.addFlashAttribute("success", "Add new level
+      // successfully!");
+    } catch (Exception e) {
+      e.printStackTrace();
+      redirectAttributes.addFlashAttribute("error", "Failed to add new level!");
     }
+    return "redirect:" + request.getHeader("Referer");
 
-    @RequestMapping(value = "/delete-comment", method = {RequestMethod.GET, RequestMethod.PUT})
-    public String deletecm(Long id, RedirectAttributes redirectAttributes,HttpServletRequest request) {
-        try {
-            cm.deletComment(id);
-            redirectAttributes.addFlashAttribute("success", "Deleted successfully!");
-        } catch (DataIntegrityViolationException e1) {
-            e1.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Duplicate name of category, please check again!");
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error server");
-        }
-        return "redirect:"+request.getHeader("Referer");
+  }
+
+  @RequestMapping(value = "/delete-comment", method = { RequestMethod.GET, RequestMethod.PUT })
+  public String deletecm(Long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    try {
+      cm.deletComment(id);
+      redirectAttributes.addFlashAttribute("success", "Deleted successfully!");
+    } catch (DataIntegrityViolationException e1) {
+      e1.printStackTrace();
+      redirectAttributes.addFlashAttribute("error", "Duplicate name of category, please check again!");
+    } catch (Exception e2) {
+      e2.printStackTrace();
+      redirectAttributes.addFlashAttribute("error", "Error server");
     }
+    return "redirect:" + request.getHeader("Referer");
+  }
 
 }
