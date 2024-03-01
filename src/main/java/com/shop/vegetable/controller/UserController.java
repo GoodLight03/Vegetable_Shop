@@ -35,7 +35,7 @@ public class UserController {
         model.addAttribute("usersss", userss);
         model.addAttribute("size", userss.size());
         model.addAttribute("usernew", new Users());
-        return "users";
+        return "admin/users";
 
     }
 
@@ -58,7 +58,8 @@ public class UserController {
 
         model.addAttribute("title", "Profile");
         model.addAttribute("page", "Profile");
-        return "users-information";
+        model.addAttribute("currentPages", "profile");
+        return "client/users-information";
 
     }
 
@@ -90,10 +91,18 @@ public class UserController {
     public String changePassword(Model model, Principal principal) {
         if (principal == null) {
             return "redirect:/login";
+        } else {
+            model.addAttribute("namelogin", principal.getName());
+            Users usk = us.findByUsername(principal.getName());
+            List<Role> rl = usk.getRoles();
+            if (rl.size() == 1) {
+                model.addAttribute("rolelogin", rl.get(0).getName());
+            }
         }
         model.addAttribute("title", "Change password");
         model.addAttribute("page", "Change password");
-        return "change-password";
+        model.addAttribute("currentPages", "changepass");
+        return "auth/change-password";
     }
 
     @PostMapping("/change-password")

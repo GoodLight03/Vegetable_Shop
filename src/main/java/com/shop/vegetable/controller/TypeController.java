@@ -40,7 +40,7 @@ public class TypeController {
         model.addAttribute("size", courses.size());
         model.addAttribute("usernew", new Users());
         model.addAttribute("courseDto", new TypeDto());
-        return "type";
+        return "admin/type";
     }
 
 
@@ -108,7 +108,7 @@ public class TypeController {
         model.addAttribute("size", courses.size());
         model.addAttribute("usernew", new Users());
         model.addAttribute("courseDto", new TypeDto());
-        return "type";
+        return "admin/type";
 
     }
 

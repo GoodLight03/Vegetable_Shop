@@ -65,7 +65,7 @@ public class OrderController {
             model.addAttribute("page", "Check-Out");
             model.addAttribute("shoppingCart", cart);
             model.addAttribute("grandTotal", cart.getTotalPrice());
-            return "checkout";
+            return "client/checkout";
 
         }
     }
@@ -86,7 +86,8 @@ public class OrderController {
             model.addAttribute("orders", orderList);
             model.addAttribute("title", "Order");
             model.addAttribute("page", "Order");
-            return "order";
+            model.addAttribute("currentPages", "order");
+            return "client/order";
         }
     }
 
@@ -117,7 +118,7 @@ public class OrderController {
             model.addAttribute("title", "Order");
             model.addAttribute("page", "Order");
             model.addAttribute("size", orderList.size());
-            return "ordersAD";
+            return "admin/ordersAD";
         }
     }
 
@@ -172,7 +173,7 @@ public class OrderController {
   
     model.addAttribute("orderproduct", ordt);
 
-    return "orderdetail";
+    return "client/orderdetail";
   }
 
 }

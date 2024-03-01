@@ -3,10 +3,12 @@
 
 <head th:fragment="header">
     <meta charset="utf-8">
-    <title>Fruitables - Vegetable Website Template</title>
+    <link href="https://cdn-icons-png.flaticon.com/512/2153/2153788.png" rel="shortcut icon" />
+    <title>Fruitables - Vegetable Website</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2153/2153788.png">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,9 +70,9 @@
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="/" class="nav-item nav-link active">Home</a>
-                        <a href="/shop?pageNo=0" class="nav-item nav-link">Shop</a>                       
-                        <a href="/contact" class="nav-item nav-link">Contact</a>
+                        <a href="/" th:classappend="${currentPages == 'home' ? 'active' : ''}" class="nav-item nav-link">Home</a>
+                        <a href="/shop?pageNo=0" th:classappend="${currentPages == 'shop' ? 'active' : ''}" class="nav-item nav-link">Shop</a>                       
+                        <a href="/contact" th:classappend="${currentPages == 'contact' ? 'active' : ''}" class="nav-item nav-link">Contact</a>
 
                         <div class="nav-item dropdown" th:if="${rolelogin}==ADMIN">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="${namelogin}"></a>
@@ -82,9 +84,9 @@
                         <div class="nav-item dropdown" th:if="${rolelogin}==CUSTOMER">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="${namelogin}"></a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                <a href="/orders" class="dropdown-item">My-Order</a>
-                                <a href="/profile" class="dropdown-item">Profile</a>
-                                <a href="/change-password" class="dropdown-item">Change-Password</a>
+                                <a href="/orders" th:classappend="${currentPages == 'order' ? 'active' : ''}" class="dropdown-item">My-Order</a>
+                                <a href="/profile" th:classappend="${currentPages == 'profile' ? 'active' : ''}" class="dropdown-item">Profile</a>
+                                <a href="/change-password" th:classappend="${currentPages == 'changepass' ? 'active' : ''}" class="dropdown-item">Change-Password</a>
                                 <a href="/logout" class="dropdown-item">Logout</a>
                             </div>
                         </div>

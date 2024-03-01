@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 
-<head th:replace="~{fragments::header}">
+<head th:replace="~{fragment/fragments::header}">
 
 </head>
 
@@ -11,7 +11,7 @@
     <div id="wrapper">
 
         <!--Sidebar-->
-        <ul th:replace="~{fragments::sidebar}"></ul>
+        <ul th:replace="~{fragment/fragments::sidebar}"></ul>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -21,7 +21,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav th:replace="~{fragments::topbar}"></nav>
+                <nav th:replace="~{fragment/fragments::topbar}"></nav>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -75,7 +75,7 @@
                 <!-- End of Main Content -->
 
                 <!-- Footer -->
-                <footer th:replace="~{fragments::footer}"></footer>
+                <footer th:replace="~{fragment/fragments::footer}"></footer>
                 <!-- End of Footer -->
 
             </div>
@@ -86,7 +86,7 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a th:replace="~{fragments::scroll}"></a>
+    <a th:replace="~{fragment/fragments::scroll}"></a>
 
     <!--Add Categories Modal-->
     <div class="modal fade" id="exampleAddCategoryModal" tabindex="-1" role="dialog"
@@ -174,7 +174,7 @@
     </div>
     <!-- End -->
     <!-- Bootstrap core JavaScript-->
-    <div th:replace="~{fragments::script}"></div>
+    <div th:replace="~{fragment/fragments::script}"></div>
 
     <script th:src="@{/js/categories.js}"></script>
 </body>

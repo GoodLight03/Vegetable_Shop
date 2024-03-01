@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 
-<head th:replace="~{fragments::header}">
+<head th:replace="~{fragment/fragments::header}">
 
 </head>
 
@@ -11,7 +11,7 @@
     <div id="wrapper">
 
         <!--Sidebar-->
-        <ul th:replace="~{fragments::sidebar}"></ul>
+        <ul th:replace="~{fragment/fragments::sidebar}"></ul>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -21,14 +21,27 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav th:replace="~{fragments::topbar}"></nav>
+                <nav th:replace="~{fragment/fragments::topbar}"></nav>
                 <!-- End of Topbar -->
+                <form th:action="@{/search-type}" method="get"
+                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <div class="input-group">
+                        <input type="text" name="keyword" class="form-control bg-light border-0 small"
+                            placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
 
                 <!-- Begin Page Content -->
-                <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleAddCategoryModal"
-                    data-whatever="@mdo">Add new category
-            </button> -->
-                <p th:if="${size == 0}">No category</p>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleAddCategoryModal"
+                    data-whatever="@mdo">Add new Type
+                </button>
+                <p th:if="${size == 0}">No Type</p>
                 <div th:if="${success}" class="text-center alert alert-success">
                     <p th:text="${success}">
                     </p>
@@ -42,21 +55,25 @@
                         <tr>
                             <th scope="col">User Index</th>
                             <th scope="col">User Name</th>
-                            <th scope="col">User Address</th>
-                            <th scope="col">User Phone</th>
-                            <!-- <th scope="col">Update Name</th> -->
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="users : ${usersss}">
+                        <tr th:each="users : ${courses}">
                             <th scope="row" th:text="${users.id}"></th>
-                            <td th:text="${users.username}"></td>
-                            <td th:text="${users.address}"></td>
-                            <td th:text="${users.phone}"></td>
+                            <td th:text="${users.name}"></td>
+
+                            <!-- <td>
+                                <a id="editButton"
+                                   th:href="@{/findById(id = ${users.id})}"
+                                   class="btn btn-primary">Update</a>
+                            </td> -->
+
                             <td>
-                                <a th:if="${ users.username!='Admin'}"
-                                    th:href="@{/delete-users(id = ${users.id})}" class=" btn btn-danger">Delete</a>
+                                <!-- <a id="editButton" th:href="@{/findById(id = ${users.id})}"
+                                    class="btn btn-primary">Update</a> -->
+                                
+                                <a th:href="@{/delete-type(id = ${users.id})}" class=" btn btn-danger">Delete</a>
                             </td>
                         </tr>
                     </tbody>
@@ -65,7 +82,7 @@
                 <!-- End of Main Content -->
 
                 <!-- Footer -->
-                <footer th:replace="~{fragments::footer}"></footer>
+                <footer th:replace="~{fragment/fragments::footer}"></footer>
                 <!-- End of Footer -->
 
             </div>
@@ -76,7 +93,7 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a th:replace="~{fragments::scroll}"></a>
+    <a th:replace="~{fragment/fragments::scroll}"></a>
 
     <!--Add Categories Modal-->
     <div class="modal fade" id="exampleAddCategoryModal" tabindex="-1" role="dialog"
@@ -84,14 +101,16 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleAddCategoryModalLabel">New Category</h5>
+                    <h5 class="modal-title" id="exampleAddCategoryModalLabel">New Type</h5>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/save-category}" method="post">
+                    <form th:action="@{/save-type}" method="post" th:object="${courseDto}"
+                        enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="name" class="col-form-label">Category Name:</label>
-                            <input type="text" class="form-control" id="name" name="name">
+                            <label for="name" class="col-form-label">Type Name:</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" name="name">
                         </div>
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Save</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -110,10 +129,10 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit category</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Type</h5>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/update-category}" method="put">
+                    <form th:action="@{/update-type}" method="put">
                         <div class="form-group">
                             <label for="idEdit" class="col-form-label">ID
                             </label> <input type="text" class="form-control" id="idEdit" name="id" readonly>
@@ -130,7 +149,7 @@
     </div>
     <!-- End -->
     <!-- Bootstrap core JavaScript-->
-    <div th:replace="~{fragments::script}"></div>
+    <div th:replace="~{fragment/fragments::script}"></div>
 
     <script th:src="@{/js/categories.js}"></script>
 </body>

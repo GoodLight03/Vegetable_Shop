@@ -27,6 +27,7 @@ import com.shop.vegetable.dto.TypeDto;
 import com.shop.vegetable.entity.Comment;
 import com.shop.vegetable.entity.Product;
 import com.shop.vegetable.entity.Role;
+import com.shop.vegetable.entity.ShoppingCart;
 import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.entity.Users;
 import com.shop.vegetable.service.CommentService;
@@ -36,6 +37,7 @@ import com.shop.vegetable.service.TypeService;
 import com.shop.vegetable.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -48,7 +50,7 @@ public class ClientController {
   private final CommentService cm;
 
   @GetMapping("/")
-  public String homes(Model model, Principal principal, Authentication authentication) {
+  public String homes(Model model, Principal principal, Authentication authentication, HttpSession session) {
     List<Role> ls = rl.findALl();
     if (ls.isEmpty()) {
       RoleDto ad = new RoleDto();
@@ -66,14 +68,26 @@ public class ClientController {
       List<Role> rl = uskt.getRoles();
       if (rl.size() == 1) {
         model.addAttribute("rolelogin", rl.get(0).getName());
+        if (rl.get(0).getName().equals("CUSTOMER")) {
+          ShoppingCart cart = uskt.getCart();
+          session.setAttribute("totalItems", cart.getTotalItems());
+        }
       }
+
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("type", courses);
 
     List<Product> products = prd.findAll();
 
-    model.addAttribute("product", products);
+    List<Product> productty = new ArrayList<Product>();
+    for (Product product : products) {
+      if (product.getType().getName().equals("Củ Quả")) {
+        productty.add(product);
+      }
+    }
+
+    model.addAttribute("product", productty);
 
     List<Product> productveg = new ArrayList<Product>();
     for (Product product : products) {
@@ -90,8 +104,14 @@ public class ClientController {
       }
     }
     model.addAttribute("productbs", productbs);
-
-    return "home";
+    model.addAttribute("currentPages", "home");
+    // Users Users = us.findByUsername(principal.getName());
+    // if(Users!=null){
+    // ShoppingCart cart = Users.getCart();
+    // session.setAttribute("totalItems", cart.getTotalItems());
+    // }
+    // session.setAttribute("totalItems", 0);
+    return "client/home";
   }
 
   @GetMapping("/check")
@@ -123,7 +143,7 @@ public class ClientController {
 
     List<Product> productty = new ArrayList<Product>();
     for (Product product : products) {
-      if (product.getType().getId().equals(id)) {
+      if (product.getType().getId().equals(id) && product.getType().getName().equals("Củ Quả")) {
         productty.add(product);
       }
     }
@@ -145,12 +165,12 @@ public class ClientController {
     }
     model.addAttribute("productbs", productbs);
 
-    return "home";
+    return "client/home";
   }
 
   @GetMapping("/admin")
   public String ad() {
-    return "indexAd";
+    return "admin/indexAd";
   }
 
   @GetMapping("/contact")
@@ -166,11 +186,12 @@ public class ClientController {
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("courses", courses);
-    return "contact";
+    model.addAttribute("currentPages", "contact");
+    return "client/contact";
   }
 
   @GetMapping("/shop")
-  public String sh( int pageNo,Model model, Principal principal, Authentication authentication) {
+  public String sh(int pageNo, Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
       Users uskh = us.findByUsername(principal.getName());
@@ -183,13 +204,13 @@ public class ClientController {
     model.addAttribute("type", courses);
 
     // List<Product> products = prd.findAll();
-    //List<ProductDto> products = prd.allProduct();
+    // List<ProductDto> products = prd.allProduct();
     Page<ProductDto> products = prd.getAllProducts(pageNo);
     model.addAttribute("currentPage", pageNo);
     model.addAttribute("totalPages", products.getTotalPages());
     model.addAttribute("product", products);
-
-    return "shop";
+    model.addAttribute("currentPages", "shop");
+    return "client/shop";
   }
 
   @GetMapping("/detail")
@@ -219,7 +240,7 @@ public class ClientController {
     model.addAttribute("product", productbs);
     model.addAttribute("commentDto", new CommentDto());
 
-    return "detail";
+    return "client/detail";
   }
 
   @GetMapping("/checkout")
@@ -235,7 +256,7 @@ public class ClientController {
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("courses", courses);
-    return "checkout";
+    return "client/checkout";
   }
 
   @PostMapping("/save-comment")

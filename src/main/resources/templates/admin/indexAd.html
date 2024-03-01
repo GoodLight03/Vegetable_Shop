@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th = "https://www.thymeleaf.org/">
 
-<head th:replace = "fragments::header">
+<head th:replace = "fragment/fragments::header">
 </head>
 <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
-        <ul th:replace = "fragments :: sidebar">
+        <ul th:replace = "fragment/fragments :: sidebar">
         </ul>
         <!-- End of Sidebar -->
 
@@ -18,7 +18,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav th:replace = "fragments :: topbar">
+                <nav th:replace = "fragment/fragments :: topbar">
                 </nav>
                 <!-- End of Topbar -->
 
@@ -34,7 +34,7 @@
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer th:replace = "fragments :: footer">
+            <footer th:replace = "fragment/fragments :: footer">
             </footer>
             <!-- End of Footer -->
 
@@ -45,13 +45,13 @@
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a th:replace = "fragments :: scroll">
+    <a th:replace = "fragment/fragments :: scroll">
     </a>
 
     <!--&lt;!&ndash; Logout Modal&ndash;&gt;
     <div th:replace = "fragments :: logoutModal"></div>-->
 
-    <div th:replace = "fragments::script"></div>
+    <div th:replace = "fragment/fragments::script"></div>
     <!-- Page level plugins -->
     <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
 

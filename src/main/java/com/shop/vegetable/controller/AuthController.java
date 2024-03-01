@@ -29,30 +29,22 @@ public class AuthController {
     @RequestMapping("/login")
     public String login(Model model) {
         model.addAttribute("title", "Login Page");
-        return "login";
+        return "auth/login";
     }
 
-    @RequestMapping("/index")
-    public String index(Model model) {
-        model.addAttribute("title", "Home Page");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return "redirect:/login";
-        }
-        return "index";
-    }
+
 
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("title", "Register");
         model.addAttribute("adminDto", new UserDto());
-        return "register";
+        return "auth/register";
     }
 
     @GetMapping("/forgot-password")
     public String forgotPassword(Model model) {
         model.addAttribute("title", "Forgot Password");
-        return "forgot-password";
+        return "auth/forgot-password";
     }
 
     @PostMapping("/register-new")

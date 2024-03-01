@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head th:replace="fragment::header">
+<head th:replace="fragment/fragment::header">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 
 <body>
-    <div th:replace="fragment::sidebar"></div>
+    <div th:replace="fragment/fragment::sidebar"></div>
 
     <!-- Modal Search Start -->
     <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -291,8 +291,8 @@
     </div>
     <!-- Fruits Shop End-->
 
-    <div th:replace="fragment::footer"></div>
-    <div th:replace="fragment::script"></div>
+    <div th:replace="fragment/fragment::footer"></div>
+    <div th:replace="fragment/fragment::script"></div>
 </body>
 
 </html>

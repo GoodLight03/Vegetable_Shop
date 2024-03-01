@@ -49,7 +49,7 @@ public class ShoppingCartController {
         model.addAttribute("shoppingCart", cart);
         model.addAttribute("title", "Cart");
         session.setAttribute("totalItems", cart.getTotalItems());
-        return "cart";
+        return "client/cart";
 
     }
 

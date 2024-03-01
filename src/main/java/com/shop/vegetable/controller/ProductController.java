@@ -52,7 +52,7 @@ public class ProductController {
         model.addAttribute("course", course);
         model.addAttribute("size", level.size());
         model.addAttribute("levelDto", new ProductDto());
-        return "product";
+        return "admin/product";
 
     }
 
@@ -67,7 +67,7 @@ public class ProductController {
         model.addAttribute("level", products);
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", products.getTotalPages());
-        return "product";
+        return "admin/product";
     }
 
     @RequestMapping("/search_probytype")
@@ -94,7 +94,7 @@ public class ProductController {
         }
 
         model.addAttribute("product", productveg);
-        return "shop";
+        return "client/shop";
 
     }
 
@@ -114,7 +114,7 @@ public class ProductController {
 
         List<Product> product = lv.findName(keyword);
         model.addAttribute("product", product);
-        return "shop";
+        return "client/shop";
 
     }
 
@@ -173,7 +173,7 @@ public class ProductController {
         model.addAttribute("title", "Add Product");
         model.addAttribute("categories", categories);
         model.addAttribute("productDto", productDto);
-        return "update-product";
+        return "admin/update-product";
     }
 
     @PostMapping("/update-product/{id}")
