@@ -1,10 +1,12 @@
 package com.shop.vegetable.controller;
 
 import java.security.Principal;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,8 @@ import com.shop.vegetable.entity.Role;
 import com.shop.vegetable.entity.ShoppingCart;
 import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.entity.Users;
+import com.shop.vegetable.log.LogFactory;
+import com.shop.vegetable.log.PageVisitor;
 import com.shop.vegetable.service.CommentService;
 import com.shop.vegetable.service.ProductService;
 import com.shop.vegetable.service.RoleService;
@@ -48,6 +52,7 @@ public class ClientController {
   private final ProductService prd;
   private final RoleService rl;
   private final CommentService cm;
+  private static final Logger logger=LogFactory.getLogger();
 
   @GetMapping("/")
   public String homes(Model model, Principal principal, Authentication authentication, HttpSession session) {
@@ -73,7 +78,10 @@ public class ClientController {
           session.setAttribute("totalItems", cart.getTotalItems());
         }
       }
+      logger.info(uskt.getUsername()+" signed in");
 
+      
+      
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("type", courses);
@@ -199,6 +207,10 @@ public class ClientController {
       if (rl.size() == 1) {
         model.addAttribute("rolelogin", rl.get(0).getName());
       }
+      PageVisitor pageVisitor=new PageVisitor();
+      Date date=new Date();
+      pageVisitor.visit(uskh.getUsername(), date);
+      
     }
     List<Type> courses = usk.findAll();
     model.addAttribute("type", courses);
