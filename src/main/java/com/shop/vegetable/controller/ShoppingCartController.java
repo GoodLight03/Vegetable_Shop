@@ -25,6 +25,7 @@ public class ShoppingCartController {
     private final ProductService productService;
     private final UserService UsersService;
     private final UserService us;
+
     @GetMapping("/carts")
     public String cart(Model model, Principal principal, HttpSession session) {
         if (principal == null) {
@@ -40,15 +41,21 @@ public class ShoppingCartController {
         Users Users = UsersService.findByUsername(principal.getName());
         ShoppingCart cart = Users.getCart();
         if (cart == null) {
-            model.addAttribute("check");
+            cart=new ShoppingCart();
+            cart.setUsers(Users);
+            cartService.saveCart(cart);
+            //model.addAttribute("check", 0);
 
         }
+        
         if (cart != null) {
+            
             model.addAttribute("grandTotal", cart.getTotalPrice());
+            model.addAttribute("shoppingCart", cart);
+            model.addAttribute("title", "Cart");
+            session.setAttribute("totalItems", cart.getTotalItems());
         }
-        model.addAttribute("shoppingCart", cart);
-        model.addAttribute("title", "Cart");
-        session.setAttribute("totalItems", cart.getTotalItems());
+
         return "client/cart";
 
     }

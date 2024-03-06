@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.vegetable.dto.UserDto;
 import com.shop.vegetable.entity.Users;
@@ -50,13 +51,13 @@ public class AuthController {
     @PostMapping("/register-new")
     public String addNewAdmin(@Valid @ModelAttribute("adminDto") UserDto adminDto,
             BindingResult result,
-            Model model) {
+            Model model,RedirectAttributes redirectAttributes) {
 
         try {
 
             if (result.hasErrors()) {
                 model.addAttribute("adminDto", adminDto);
-                return "register";
+                return "auth/register";
             }
             String username = adminDto.getUsername();
             Users admin = adminService.findByUsername(username);
@@ -64,14 +65,17 @@ public class AuthController {
                 model.addAttribute("adminDto", adminDto);
                 System.out.println("admin not null");
                 model.addAttribute("emailError", "Your email has been registered!");
-                return "register";
+                return "auth/register";
             }
             if (adminDto.getPassword().equals(adminDto.getRepeatPassword())) {
                 adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
                 adminService.save(adminDto);
-                System.out.println("success");
-                model.addAttribute("success", "Register successfully!");
-                model.addAttribute("adminDto", adminDto);
+                // System.out.println("success");
+                // model.addAttribute("success", "Register successfully!");
+                // model.addAttribute("adminDto", adminDto);
+                redirectAttributes.addFlashAttribute("success", "Register successfully!");
+                return "redirect:/login";
+
             } else {
                 model.addAttribute("adminDto", adminDto);
                 model.addAttribute("passwordError", "Your password maybe wrong! Check again!");
@@ -81,7 +85,7 @@ public class AuthController {
             e.printStackTrace();
             model.addAttribute("errors", "The server has been wrong!");
         }
-        return "register";
+        return "auth/register";
 
     }
 }

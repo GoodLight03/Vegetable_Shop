@@ -51,11 +51,17 @@
                                 <div class="form-group">
                                     <input type="text" th:field = "*{address}" class="form-control form-control-user" id="exampleInputEmail"
                                         placeholder="Adress">
+                                        <div class="alert alert-danger" th:if = "${#fields.hasErrors('address')}"
+                                            th:errors = "*{address}"
+                                        ></div>
                                 </div>
 
                                 <div class="form-group">
                                     <input type="tel" th:field = "*{phone}" class="form-control form-control-user" id="exampleInputPhone"
                                         placeholder="Tel">
+                                        <div class="alert alert-danger" th:if = "${#fields.hasErrors('phone')}"
+                                            th:errors = "*{phone}"
+                                        ></div>
                                 </div>
 
                                 <div class="form-group row">

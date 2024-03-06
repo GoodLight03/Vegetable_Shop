@@ -75,7 +75,10 @@ public class ClientController {
         model.addAttribute("rolelogin", rl.get(0).getName());
         if (rl.get(0).getName().equals("CUSTOMER")) {
           ShoppingCart cart = uskt.getCart();
-          session.setAttribute("totalItems", cart.getTotalItems());
+          if(cart !=null){
+            session.setAttribute("totalItems", cart.getTotalItems());
+          }
+          
         }
       }
       logger.info(uskt.getUsername()+" signed in");

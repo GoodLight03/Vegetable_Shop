@@ -330,4 +330,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
         return cartItems;
     }
+
+    @Override
+    public ShoppingCart saveCart(ShoppingCart shoppingCart) {
+       return cartRepository.save(shoppingCart);
+    }
 }
