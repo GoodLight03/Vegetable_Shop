@@ -10,7 +10,7 @@ public interface UserService {
 
     Users findByUsername(String username);
 
-    //Users findByUsers(String name);
+    boolean delete(long id);
 
     List<Users> findALl();
     // List<Users> findGV();

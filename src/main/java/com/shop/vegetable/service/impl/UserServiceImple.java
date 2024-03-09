@@ -1,6 +1,7 @@
 package com.shop.vegetable.service.impl;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -82,6 +83,16 @@ public class UserServiceImple implements UserService{
         Users customer = userRepository.findByUsername(customerDto.getUsername());
         customer.setPassword(customerDto.getPassword());
         return userRepository.save(customer);
+    }
+
+    @Override
+    public boolean delete(long id) {
+        Users existMember = userRepository.findById(id).orElse(null);
+        if (existMember == null) {
+            return false;
+        }
+        userRepository.deleteById(id);
+        return true;
     }
 
 }

@@ -35,9 +35,9 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
-    private final ProductService lv;
-    private final TypeService cs;
-    private final UserService us;
+    private final ProductService productService;
+    private final TypeService typeService;
+    private final UserService userService;
 
     @RequestMapping("/product")
     public String lst(Model model,Principal principal) {
@@ -46,11 +46,11 @@ public class ProductController {
         }
         model.addAttribute("title", "Manage Level");
         //List<Product> level = lv.findAll();
-        List<ProductDto> level = lv.allProduct();
-        List<Type> course = cs.findAll();
-        model.addAttribute("level", level);
-        model.addAttribute("course", course);
-        model.addAttribute("size", level.size());
+        List<ProductDto> productDtos = productService.allProduct();
+        List<Type> types = typeService.findAll();
+        model.addAttribute("level", productDtos);
+        model.addAttribute("course", types);
+        model.addAttribute("size", productDtos.size());
         model.addAttribute("levelDto", new ProductDto());
         return "admin/product";
 
@@ -61,7 +61,7 @@ public class ProductController {
         if (principal == null) {
             return "redirect:/login";
         }
-        Page<ProductDto> products = lv.getAllProducts(pageNo);
+        Page<ProductDto> products = productService.getAllProducts(pageNo);
         model.addAttribute("title", "Manage Products");
         model.addAttribute("size", products.getSize());
         model.addAttribute("level", products);
@@ -74,17 +74,17 @@ public class ProductController {
     public String search(Long id, Model model, Principal principal, Authentication authentication) {
         if (principal != null) {
             model.addAttribute("namelogin", principal.getName());
-            Users usk = us.findByUsername(principal.getName());
-            List<Role> rl = usk.getRoles();
-            if (rl.size() == 1) {
-                model.addAttribute("rolelogin", rl.get(0).getName());
+            Users users = userService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
             }
 
         }
-        List<Type> courses = cs.findAll();
-        model.addAttribute("type", courses);
+        List<Type> types = typeService.findAll();
+        model.addAttribute("type", types);
 
-        List<Product> products = lv.findAll();
+        List<Product> products = productService.findAll();
 
         List<Product> productveg = new ArrayList<Product>();
         for (Product product : products) {
@@ -104,15 +104,15 @@ public class ProductController {
             Model model, Principal principal) {
         if (principal != null) {
             model.addAttribute("namelogin", principal.getName());
-            Users usk = us.findByUsername(principal.getName());
-            List<Role> rl = usk.getRoles();
-            if (rl.size() == 1) {
-                model.addAttribute("rolelogin", rl.get(0).getName());
+            Users users = userService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
             }
 
         }
 
-        List<Product> product = lv.findName(keyword);
+        List<Product> product = productService.findName(keyword);
         model.addAttribute("product", product);
         return "client/shop";
 
@@ -124,7 +124,7 @@ public class ProductController {
             RedirectAttributes redirectAttributes) {
         try {
 
-            lv.save(imageProduct, course);
+            productService.save(imageProduct, course);
             redirectAttributes.addFlashAttribute("success", "Add new course successfully!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,7 +137,7 @@ public class ProductController {
     @RequestMapping(value = "/delete-product", method = { RequestMethod.GET, RequestMethod.PUT })
     public String delete(Long id, RedirectAttributes redirectAttributes) {
         try {
-            lv.delete(id);
+            productService.delete(id);
             redirectAttributes.addFlashAttribute("success", "Deleted successfully!");
         } catch (DataIntegrityViolationException e1) {
             e1.printStackTrace();
@@ -152,7 +152,7 @@ public class ProductController {
     @RequestMapping(value = "/findByProductId", method = { RequestMethod.PUT, RequestMethod.GET })
     @ResponseBody
     public Optional<Product> findProductId(Long id) {
-        return lv.findById(id);
+        return productService.findById(id);
     }
 
     @GetMapping("/update-product/{id}")
@@ -160,15 +160,15 @@ public class ProductController {
         if (principal == null) {
             return "redirect:/login";
         }
-        List<Type> categories = cs.findAll();
-        Optional<Product> vv=lv.findById(id);
+        List<Type> categories = typeService.findAll();
+        Optional<Product> proOptional=productService.findById(id);
 
         ProductDto productDto = new ProductDto();
-        productDto.setId(vv.get().getId());
-        productDto.setName(vv.get().getName());
-        productDto.setPrice(vv.get().getPrice());
-        productDto.setDescription(vv.get().getDescription());
-        productDto.setImage(vv.get().getImage());
+        productDto.setId(proOptional.get().getId());
+        productDto.setName(proOptional.get().getName());
+        productDto.setPrice(proOptional.get().getPrice());
+        productDto.setDescription(proOptional.get().getDescription());
+        productDto.setImage(proOptional.get().getImage());
 
         model.addAttribute("title", "Add Product");
         model.addAttribute("categories", categories);
@@ -184,7 +184,7 @@ public class ProductController {
             if (principal == null) {
                 return "redirect:/login";
             }
-            lv.update(imageProduct, productDto);
+            productService.update(imageProduct, productDto);
             redirectAttributes.addFlashAttribute("success", "Update successfully!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -201,7 +201,7 @@ public class ProductController {
         if (principal == null) {
             return "redirect:/login";
         }
-        Page<ProductDto> products = lv.searchProducts(pageNo, keyword);
+        Page<ProductDto> products = productService.searchProducts(pageNo, keyword);
         model.addAttribute("title", "Result Search Products");
         model.addAttribute("size", products.getSize());
         model.addAttribute("products", products);

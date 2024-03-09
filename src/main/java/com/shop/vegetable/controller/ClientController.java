@@ -5,6 +5,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -47,136 +48,71 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class ClientController {
-  private final UserService us;
-  private final TypeService usk;
-  private final ProductService prd;
-  private final RoleService rl;
-  private final CommentService cm;
-  private static final Logger logger=LogFactory.getLogger();
+  private final UserService userService;
+  private final TypeService typeService;
+  private final ProductService productService;
+  private final RoleService roleService;
+  private final CommentService commentService;
+  private static final Logger logger = LogFactory.getLogger();
 
   @GetMapping("/")
   public String homes(Model model, Principal principal, Authentication authentication, HttpSession session) {
-    List<Role> ls = rl.findALl();
-    if (ls.isEmpty()) {
-      RoleDto ad = new RoleDto();
-      ad.setName("ADMIN");
-      rl.save(ad);
-      us.saveAD();
-
-      RoleDto cs = new RoleDto();
-      cs.setName("CUSTOMER");
-      rl.save(cs);
+    List<Role> roles = roleService.findALl();
+    if (roles.isEmpty()) {
+      addAdminAndCustomer();
     }
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users uskt = us.findByUsername(principal.getName());
+      Users uskt = userService.findByUsername(principal.getName());
       List<Role> rl = uskt.getRoles();
       if (rl.size() == 1) {
         model.addAttribute("rolelogin", rl.get(0).getName());
         if (rl.get(0).getName().equals("CUSTOMER")) {
           ShoppingCart cart = uskt.getCart();
-          if(cart !=null){
+          if (cart != null) {
             session.setAttribute("totalItems", cart.getTotalItems());
           }
-          
+
         }
       }
-      logger.info(uskt.getUsername()+" signed in");
+      logger.info(uskt.getUsername() + " signed in");
 
-      
-      
     }
-    List<Type> courses = usk.findAll();
+    List<Type> courses = typeService.findAll();
     model.addAttribute("type", courses);
 
-    List<Product> products = prd.findAll();
+    List<Product> products = productService.findAll();
 
-    List<Product> productty = new ArrayList<Product>();
-    for (Product product : products) {
-      if (product.getType().getName().equals("Củ Quả")) {
-        productty.add(product);
-      }
-    }
+    List<Product> productty = products.stream()
+        .filter(product -> product.getType().getName().equals("Củ Quả"))
+        .collect(Collectors.toList());
 
     model.addAttribute("product", productty);
 
-    List<Product> productveg = new ArrayList<Product>();
-    for (Product product : products) {
-      if (product.getType().getName().equals("Rau")) {
-        productveg.add(product);
-      }
-    }
+    List<Product> productveg = products.stream()
+    .filter(product -> product.getType().getName().equals("Rau"))
+    .collect(Collectors.toList());
+
     model.addAttribute("productvg", productveg);
 
-    List<Product> productbs = new ArrayList<Product>();
-    for (Product product : products) {
-      if (product.getPrice() >= 30) {
-        productbs.add(product);
-      }
-    }
+    List<Product> productbs = products.stream()
+        .filter(product -> product.getPrice()>=50)
+        .collect(Collectors.toList());
+
     model.addAttribute("productbs", productbs);
     model.addAttribute("currentPages", "home");
-    // Users Users = us.findByUsername(principal.getName());
-    // if(Users!=null){
-    // ShoppingCart cart = Users.getCart();
-    // session.setAttribute("totalItems", cart.getTotalItems());
-    // }
-    // session.setAttribute("totalItems", 0);
     return "client/home";
   }
 
-  @GetMapping("/check")
-  public String home(Long id, Model model, Principal principal, Authentication authentication) {
-    List<Role> ls = rl.findALl();
-    if (ls.isEmpty()) {
-      RoleDto ad = new RoleDto();
-      ad.setName("ADMIN");
-      rl.save(ad);
-      us.saveAD();
+  public void addAdminAndCustomer(){
+    RoleDto adminRole = new RoleDto();
+    adminRole.setName("ADMIN");
+    roleService.save(adminRole);
+    userService.saveAD();
 
-      RoleDto cs = new RoleDto();
-      cs.setName("CUSTOMER");
-      rl.save(cs);
-    }
-    if (principal != null) {
-      model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
-      }
-
-    }
-    List<Type> courses = usk.findAll();
-    model.addAttribute("type", courses);
-
-    List<Product> products = prd.findAll();
-
-    List<Product> productty = new ArrayList<Product>();
-    for (Product product : products) {
-      if (product.getType().getId().equals(id) && product.getType().getName().equals("Củ Quả")) {
-        productty.add(product);
-      }
-    }
-    model.addAttribute("product", productty);
-
-    List<Product> productveg = new ArrayList<Product>();
-    for (Product product : products) {
-      if (product.getType().getName().equals("Rau")) {
-        productveg.add(product);
-      }
-    }
-    model.addAttribute("productvg", productveg);
-
-    List<Product> productbs = new ArrayList<Product>();
-    for (Product product : products) {
-      if (product.getPrice() >= 30) {
-        productbs.add(product);
-      }
-    }
-    model.addAttribute("productbs", productbs);
-
-    return "client/home";
+    RoleDto customerRole = new RoleDto();
+    customerRole.setName("CUSTOMER");
+    roleService.save(customerRole);
   }
 
   @GetMapping("/admin")
@@ -188,14 +124,14 @@ public class ClientController {
   public String ct(Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
       }
 
     }
-    List<Type> courses = usk.findAll();
+    List<Type> courses = typeService.findAll();
     model.addAttribute("courses", courses);
     model.addAttribute("currentPages", "contact");
     return "client/contact";
@@ -205,22 +141,22 @@ public class ClientController {
   public String sh(int pageNo, Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users uskh = us.findByUsername(principal.getName());
-      List<Role> rl = uskh.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
       }
-      PageVisitor pageVisitor=new PageVisitor();
-      Date date=new Date();
-      pageVisitor.visit(uskh.getUsername(), date);
-      
+      PageVisitor pageVisitor = new PageVisitor();
+      Date date = new Date();
+      pageVisitor.visit(users.getUsername(), date);
+
     }
-    List<Type> courses = usk.findAll();
+    List<Type> courses = typeService.findAll();
     model.addAttribute("type", courses);
 
     // List<Product> products = prd.findAll();
     // List<ProductDto> products = prd.allProduct();
-    Page<ProductDto> products = prd.getAllProducts(pageNo);
+    Page<ProductDto> products = productService.getAllProducts(pageNo);
     model.addAttribute("currentPage", pageNo);
     model.addAttribute("totalPages", products.getTotalPages());
     model.addAttribute("product", products);
@@ -232,17 +168,17 @@ public class ClientController {
   public String dt(Long id, Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
       }
 
     }
-    List<Type> courses = usk.findAll();
+    List<Type> courses = typeService.findAll();
     model.addAttribute("type", courses);
 
-    List<Product> products = prd.findAll();
+    List<Product> products = productService.findAll();
     Product productbs = new Product();
     for (Product product : products) {
       if (product.getId().equals(id)) {
@@ -250,8 +186,8 @@ public class ClientController {
       }
     }
 
-    List<Comment> lstcm = cm.findAll(productbs.getId());
-    model.addAttribute("lstcomment", lstcm);
+    List<Comment> comments = commentService.findAll(productbs.getId());
+    model.addAttribute("lstcomment", comments);
     model.addAttribute("product", productbs);
     model.addAttribute("commentDto", new CommentDto());
 
@@ -262,14 +198,14 @@ public class ClientController {
   public String co(Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
       }
 
     }
-    List<Type> courses = usk.findAll();
+    List<Type> courses = typeService.findAll();
     model.addAttribute("courses", courses);
     return "client/checkout";
   }
@@ -277,13 +213,16 @@ public class ClientController {
   @PostMapping("/save-comment")
   public String addLevel(@RequestParam("idd") Long idd, @ModelAttribute("commentDto") CommentDto commentDto,
       RedirectAttributes redirectAttributes, Principal principal, HttpServletRequest request) {
+    if (principal == null) {
+      return "redirect:/login";
+    }
     try {
-      Users usk = us.findByUsername(principal.getName());
-      Product product = prd.getByIdNotDto(idd);
-      commentDto.setUsers(usk);
+      Users users = userService.findByUsername(principal.getName());
+      Product product = productService.getByIdNotDto(idd);
+      commentDto.setUsers(users);
       commentDto.setCommentDate(new Date());
       commentDto.setProduct(product);
-      cm.save(commentDto);
+      commentService.save(commentDto);
       // redirectAttributes.addFlashAttribute("success", "Add new level
       // successfully!");
     } catch (Exception e) {
@@ -297,7 +236,7 @@ public class ClientController {
   @RequestMapping(value = "/delete-comment", method = { RequestMethod.GET, RequestMethod.PUT })
   public String deletecm(Long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
     try {
-      cm.deletComment(id);
+      commentService.deletComment(id);
       redirectAttributes.addFlashAttribute("success", "Deleted successfully!");
     } catch (DataIntegrityViolationException e1) {
       e1.printStackTrace();
@@ -307,6 +246,13 @@ public class ClientController {
       redirectAttributes.addFlashAttribute("error", "Error server");
     }
     return "redirect:" + request.getHeader("Referer");
+  }
+
+  @GetMapping("/errors")
+  public String cet(Model model) {
+    model.addAttribute("status", 403);
+    model.addAttribute("errorMessage", "Bạn không có quyền!");
+    return "auth/error";
   }
 
 }

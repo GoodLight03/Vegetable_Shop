@@ -30,14 +30,14 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class TypeController {
-    private final TypeService us;
+    private final TypeService typeService;
 
     @RequestMapping("/type")
     public String lst(Model model) {
         model.addAttribute("title", "Manage Course");
-        List<Type> courses = us.findAll();
-        model.addAttribute("courses", courses);
-        model.addAttribute("size", courses.size());
+        List<Type> types = typeService.findAll();
+        model.addAttribute("courses", types);
+        model.addAttribute("size", types.size());
         model.addAttribute("usernew", new Users());
         model.addAttribute("courseDto", new TypeDto());
         return "admin/type";
@@ -45,10 +45,10 @@ public class TypeController {
 
 
     @PostMapping("/save-type")
-    public String addLevel(@ModelAttribute("courseDto") TypeDto levelDto,
+    public String addLevel(@ModelAttribute("courseDto") TypeDto typeDto,
             RedirectAttributes redirectAttributes) {
         try {
-            us.save(levelDto);
+            typeService.save(typeDto);
             redirectAttributes.addFlashAttribute("success", "Add new level successfully!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,13 +61,13 @@ public class TypeController {
     @RequestMapping(value = "/findById", method = { RequestMethod.PUT, RequestMethod.GET })
     @ResponseBody
     public Optional<Type> findById(Long id) {
-        return us.findById(id);
+        return typeService.findById(id);
     }
 
     @GetMapping("/update-type")
     public String update(Type course, RedirectAttributes redirectAttributes) {
         try {
-            us.update(course);
+            typeService.update(course);
             redirectAttributes.addFlashAttribute("success", "Update successfully!");
         } catch (DataIntegrityViolationException e1) {
             e1.printStackTrace();
@@ -82,7 +82,7 @@ public class TypeController {
     @RequestMapping(value = "/delete-type", method = {RequestMethod.GET, RequestMethod.PUT})
     public String delete(Long id, RedirectAttributes redirectAttributes) {
         try {
-            us.delete(id);
+            typeService.delete(id);
             redirectAttributes.addFlashAttribute("success", "Deleted successfully!");
         } catch (DataIntegrityViolationException e1) {
             e1.printStackTrace();
@@ -103,9 +103,9 @@ public class TypeController {
             return "redirect:/login";
         }
         model.addAttribute("title", "Manage Course");
-        List<Type> courses = us.findCourses(keyword);
-        model.addAttribute("courses", courses);
-        model.addAttribute("size", courses.size());
+        List<Type> types = typeService.findCourses(keyword);
+        model.addAttribute("courses", types);
+        model.addAttribute("size", types.size());
         model.addAttribute("usernew", new Users());
         model.addAttribute("courseDto", new TypeDto());
         return "admin/type";

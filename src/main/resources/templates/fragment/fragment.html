@@ -73,7 +73,6 @@
                         <a href="/" th:classappend="${currentPages == 'home' ? 'active' : ''}" class="nav-item nav-link">Home</a>
                         <a href="/shop?pageNo=0" th:classappend="${currentPages == 'shop' ? 'active' : ''}" class="nav-item nav-link">Shop</a>                       
                         <a href="/contact" th:classappend="${currentPages == 'contact' ? 'active' : ''}" class="nav-item nav-link">Contact</a>
-
                         <div class="nav-item dropdown" th:if="${rolelogin}==ADMIN">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="${namelogin}"></a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">

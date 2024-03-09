@@ -23,8 +23,7 @@ import java.util.List;
 public class ShoppingCartController {
     private final ShoppingCartService cartService;
     private final ProductService productService;
-    private final UserService UsersService;
-    private final UserService us;
+    private final UserService usersService;
 
     @GetMapping("/carts")
     public String cart(Model model, Principal principal, HttpSession session) {
@@ -32,13 +31,13 @@ public class ShoppingCartController {
             return "redirect:/login";
         } else {
             model.addAttribute("namelogin", principal.getName());
-            Users usk = us.findByUsername(principal.getName());
-            List<Role> rl = usk.getRoles();
-            if (rl.size() == 1) {
-                model.addAttribute("rolelogin", rl.get(0).getName());
+            Users users = usersService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
             }
         }
-        Users Users = UsersService.findByUsername(principal.getName());
+        Users Users = usersService.findByUsername(principal.getName());
         ShoppingCart cart = Users.getCart();
         if (cart == null) {
             cart=new ShoppingCart();

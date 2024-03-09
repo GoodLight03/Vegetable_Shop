@@ -34,7 +34,7 @@ public class OrderController {
     private final OrderService orderService;
 
     private final ShoppingCartService cartService;
-    private final UserService us;
+    private final UserService userService;
 
     @GetMapping("/check-out")
     public String checkOut(Principal principal, Model model) {
@@ -42,10 +42,10 @@ public class OrderController {
             return "redirect:/login";
         } else {
             model.addAttribute("namelogin", principal.getName());
-            Users usk = us.findByUsername(principal.getName());
-            List<Role> rl = usk.getRoles();
-            if (rl.size() == 1) {
-                model.addAttribute("rolelogin", rl.get(0).getName());
+            Users users = userService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
             }
 
             Users Users = usersService.findByUsername(principal.getName());
@@ -76,10 +76,10 @@ public class OrderController {
             return "redirect:/login";
         } else {
             model.addAttribute("namelogin", principal.getName());
-            Users usk = us.findByUsername(principal.getName());
-            List<Role> rl = usk.getRoles();
-            if (rl.size() == 1) {
-                model.addAttribute("rolelogin", rl.get(0).getName());
+            Users  users= userService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
             }
             Users Users = usersService.findByUsername(principal.getName());
             List<Order> orderList = Users.getOrders();
@@ -97,10 +97,10 @@ public class OrderController {
             return "redirect:/login";
         } else {
             model.addAttribute("namelogin", principal.getName());
-            Users usk = us.findByUsername(principal.getName());
-            List<Role> rl = usk.getRoles();
-            if (rl.size() == 1) {
-                model.addAttribute("rolelogin", rl.get(0).getName());
+            Users users = userService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
             }
             List<Order> orderList = orderService.findALlOrders();
             double totalPrice = 0.0;
@@ -152,10 +152,10 @@ public class OrderController {
   public String dt(Long id, Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
-      Users usk = us.findByUsername(principal.getName());
-      List<Role> rl = usk.getRoles();
-      if (rl.size() == 1) {
-        model.addAttribute("rolelogin", rl.get(0).getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
       }
 
     }
@@ -169,9 +169,9 @@ public class OrderController {
     
     model.addAttribute("order", order);
 
-    List<OrderDetail> ordt = orderService.AllOrderDetail(order.getId());
+    List<OrderDetail> orderDetails = orderService.AllOrderDetail(order.getId());
   
-    model.addAttribute("orderproduct", ordt);
+    model.addAttribute("orderproduct", orderDetails);
 
     return "client/orderdetail";
   }

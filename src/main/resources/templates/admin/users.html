@@ -56,7 +56,7 @@
                             <td th:text="${users.phone}"></td>
                             <td>
                                 <a th:if="${ users.username!='Admin'}"
-                                    th:href="@{/delete-users(id = ${users.id})}" class=" btn btn-danger">Delete</a>
+                                    th:href="@{'#' + ${users.id}}" id="" class="btn btn-danger btn-delete-user">Delete</a>
                             </td>
                         </tr>
                     </tbody>
@@ -133,6 +133,35 @@
     <div th:replace="~{fragment/fragments::script}"></div>
 
     <script th:src="@{/js/categories.js}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            // $("#select_all").click(function(){
+            //     var checked_status = this.checked;
+            //     $("input[name='select[]']").each(function(){
+            //         this.checked = checked_status;
+            //     });
+            // });
+
+            $(".btn-delete-user").click(function () {
+                var id = $(this).attr("href").replace("#", "");
+                if (confirm("Bạn có chắc muốn xoá tài khoản này?")) {
+                    $.ajax({
+                        url: "/delete-user/" + id,
+                        type: "DELETE",
+                       
+                        success: function (data) {
+                            alert("Xoá thành công!");
+                            window.location.reload();
+                        },
+                        error: function () {
+                            alert("Thao tác thất bại, vui lòng thử lại sau!");
+                        }
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
 </body>
 
 </html>
