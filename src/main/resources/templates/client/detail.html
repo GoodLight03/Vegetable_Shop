@@ -179,7 +179,7 @@
                                             <p class="mb-2" style="font-size: 14px;" th:text="${cm.commentDate}"></p>
                                             <div class="d-flex justify-content-between">
                                                 <h5 style="width: 200px;" th:text="${cm.users.username}"></h5>
-                                                <div style="margin-left: 500px;" class="d-flex mb-3">
+                                                <div style="margin-left: 400px;" class="d-flex mb-3">
                                                     <span th:each="starNumber : ${#numbers.sequence(1, 5)}">
                                                         <i
                                                             th:class="${starNumber &lt;= cm.start ? 'fa fa-star text-secondary' : 'fa fa-star'}"></i>

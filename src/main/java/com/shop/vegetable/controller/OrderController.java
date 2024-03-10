@@ -19,6 +19,7 @@ import com.shop.vegetable.entity.Role;
 import com.shop.vegetable.entity.ShoppingCart;
 import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.entity.Users;
+import com.shop.vegetable.exception.RecordNotFoundException;
 import com.shop.vegetable.service.OrderService;
 import com.shop.vegetable.service.ShoppingCartService;
 import com.shop.vegetable.service.UserService;
@@ -160,11 +161,15 @@ public class OrderController {
 
     }
     List<Order> orders = orderService.findAll(principal.getName());
-    Order order=new Order();
+    Order order=null;
+    
     for (Order order2 : orders) {
         if(order2.getId().equals(id)){
             order=order2;
         }
+    }
+    if(order==null){
+        throw new RecordNotFoundException();
     }
     
     model.addAttribute("order", order);

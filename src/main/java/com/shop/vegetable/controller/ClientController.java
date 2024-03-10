@@ -33,6 +33,7 @@ import com.shop.vegetable.entity.Role;
 import com.shop.vegetable.entity.ShoppingCart;
 import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.entity.Users;
+import com.shop.vegetable.exception.RecordNotFoundException;
 import com.shop.vegetable.log.LogFactory;
 import com.shop.vegetable.log.PageVisitor;
 import com.shop.vegetable.service.CommentService;
@@ -185,6 +186,9 @@ public class ClientController {
         productbs = product;
       }
     }
+    // if(productbs==null)
+    //       throw new RecordNotFoundException();
+    
 
     List<Comment> comments = commentService.findAll(productbs.getId());
     model.addAttribute("lstcomment", comments);
