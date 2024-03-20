@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.vegetable.dto.CommentDto;
@@ -28,6 +31,7 @@ import com.shop.vegetable.dto.ProductDto;
 import com.shop.vegetable.dto.RoleDto;
 import com.shop.vegetable.dto.TypeDto;
 import com.shop.vegetable.entity.Comment;
+import com.shop.vegetable.entity.Contact;
 import com.shop.vegetable.entity.Product;
 import com.shop.vegetable.entity.Role;
 import com.shop.vegetable.entity.ShoppingCart;
@@ -37,11 +41,13 @@ import com.shop.vegetable.exception.RecordNotFoundException;
 import com.shop.vegetable.log.LogFactory;
 import com.shop.vegetable.log.PageVisitor;
 import com.shop.vegetable.service.CommentService;
+import com.shop.vegetable.service.ContactService;
 import com.shop.vegetable.service.ProductService;
 import com.shop.vegetable.service.RoleService;
 import com.shop.vegetable.service.TypeService;
 import com.shop.vegetable.service.UserService;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +60,7 @@ public class ClientController {
   private final ProductService productService;
   private final RoleService roleService;
   private final CommentService commentService;
+  private final ContactService contactService;
   private static final Logger logger = LogFactory.getLogger();
 
   @GetMapping("/")
@@ -121,22 +128,7 @@ public class ClientController {
     return "admin/indexAd";
   }
 
-  @GetMapping("/contact")
-  public String ct(Model model, Principal principal, Authentication authentication) {
-    if (principal != null) {
-      model.addAttribute("namelogin", principal.getName());
-      Users users = userService.findByUsername(principal.getName());
-      List<Role> roles = users.getRoles();
-      if (roles.size() == 1) {
-        model.addAttribute("rolelogin", roles.get(0).getName());
-      }
-
-    }
-    List<Type> courses = typeService.findAll();
-    model.addAttribute("courses", courses);
-    model.addAttribute("currentPages", "contact");
-    return "client/contact";
-  }
+  
 
   @GetMapping("/shop")
   public String sh(int pageNo, Model model, Principal principal, Authentication authentication) {
@@ -165,6 +157,7 @@ public class ClientController {
     return "client/shop";
   }
 
+  
   @GetMapping("/detail")
   public String dt(Long id, Model model, Principal principal, Authentication authentication) {
     if (principal != null) {

@@ -45,6 +45,7 @@ public class UsersConfiguration {
                 AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
                 http
+                        
                         .csrf(AbstractHttpConfigurer::disable)
                         .authorizeHttpRequests(author -> author
                                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
@@ -52,9 +53,9 @@ public class UsersConfiguration {
                                         // .requestMatchers("/home").permitAll()
                                         .requestMatchers("/carts", "/check-out").hasAuthority("CUSTOMER")
                                         .requestMatchers("/", "/forgot-password", "/register", "/register-new",
-                                                                "/contact", "/shop", "/detail")
+                                                                 "/shop")
                                         .permitAll()
-                                        .requestMatchers("/user", "/type", "/eclass", "/product", "/admin")
+                                        .requestMatchers("/user", "/type", "/eclass", "/product", "/admin","/lstcontact")
                                         .hasAuthority("ADMIN")
                                         .anyRequest().permitAll()
                                 // .anyRequest().authenticated()

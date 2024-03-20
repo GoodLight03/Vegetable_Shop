@@ -41,7 +41,10 @@
     </div>
     <!-- Single Page Header End -->
 
-
+    <div th:if="${success}" class="text-center alert alert-success">
+        <p th:text="${success}">
+        </p>
+    </div>
     <!-- Contact Start -->
     <div class="container-fluid contact py-5">
         <div class="container py-5">
@@ -61,10 +64,10 @@
                         </div>
                     </div>
                     <div class="col-lg-7">
-                        <form action="" class="">
-                            <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name">
-                            <input type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email">
-                            <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message"></textarea>
+                        <form th:action="@{/contact}" method="post" th:object="${contact}">
+                            <input th:field = "*{email}" type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email">
+                            <input th:field = "*{title}" type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Title">
+                            <textarea th:field = "*{content}" class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Content"></textarea>
                             <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
                         </form>
                     </div>
