@@ -25,7 +25,7 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleAddCategoryModal"
+                <button type="button" class="btn btn-primary addProduct" data-toggle="modal" data-target="#"
                     data-whatever="@mdo">Add new Product
                 </button>
                 <p th:if="${size == 0}">No product</p>
@@ -37,20 +37,20 @@
                     <p th:text="${error}"></p>
                 </div>
 
-                <table class="table table-striped" th:if="${size > 0}">
+                <table class="table table-striped tblType" th:if="${size > 0}">
                     <thead>
                         <tr>
                             <th scope="col">User Index</th>
                             <th scope="col">Product Name</th>
                             <th scope="col">Product Price</th>
                             <th scope="col">Product Description</th>
-                            <th scope="col">Product Type</th>
+                            <!-- <th scope="col">Product Type</th> -->
                             <th scope="col">Product Img</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="users : ${level}">
+                        <!-- <tr th:each="users : ${level}">
                             <th scope="row" th:text="${users.id}"></th>
                             <td th:text="${users.name}"></td>
                             <td th:text="${users.price}"></td>
@@ -67,10 +67,10 @@
                                 <a th:href="@{/delete-product(id = ${users.id})}" class=" btn btn-danger">Delete</a>
 
                             </td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                 </table>
-              
+
 
                 <!-- End of Main Content -->
 
@@ -97,27 +97,36 @@
                     <h5 class="modal-title" id="exampleAddCategoryModalLabel">New Product</h5>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/save-product}" method="post" th:object="${levelDto}"
-                        enctype="multipart/form-data">
+                    <!-- <form th:action="@{/save-product}" method="post" th:object="${levelDto}"
+                        enctype="multipart/form-data"> -->
+                    <form class="addOtherForm">
+                        <div>
+                            <input  class="form-control" name="id"
+                                id="id" readonly="true">
+                        </div>
                         <div class="form-group">
                             <label for="name" class="col-form-label">Product Name:</label>
-                            <input type="text" class="form-control" id="name" th:field="*{name}" name="name">
+                            <!-- <input type="text" class="form-control" id="name" th:field="*{name}" name="name"> -->
+                            <input type="text" class="form-control" id="name" name="name">
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-form-label">Product Price:</label>
-                            <input type="text" class="form-control" id="name" th:field="*{price}" name="price">
+                            <!-- <input type="text" class="form-control" id="name" th:field="*{price}" name="price"> -->
+                            <input type="text" class="form-control" id="price" name="price">
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-form-label">Product Description:</label>
-                            <textarea type="text" class="form-control" id="name" th:field="*{description}"
-                                name="description"></textarea>
+                            <!-- <textarea type="text" class="form-control" id="name" th:field="*{description}"
+                                name="description"></textarea> -->
+                            <textarea type="text" class="form-control" id="description" name="description"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-form-label">Product Type:</label>
                             <div class="col-md-4">
                                 <!-- File Button -->
-                                <select id="product_categories" th:field="*{type}" name="product_categories"
-                                    class="form-control">
+                                <!-- <select id="product_categories" th:field="*{type}" name="product_categories"
+                                    class="form-control"> -->
+                                <select id="type" name="type" class="form-control">
                                     <option th:value="null">-SELECT-</option>
                                     <option th:each="category : ${course}" th:value="${category.id}"
                                         th:text="${category.name}">
@@ -131,13 +140,14 @@
                                 <div class="form-group" -->
                             <label class="col-md-4 control-label" for="image">Type IMAGE</label>
                             <div class="col-md-4">
-                                <input id="image" name="imageProduct" class="input-file" type="file">
+                                <!-- <input id="image" name="imageProduct" class="input-file" type="file"> -->
+                                <input id="file" name="file" class="input-file" type="file">
                                 <!-- </div>
                                 </div> -->
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary btnSaveForm">Save</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -177,6 +187,195 @@
     <div th:replace="~{fragment/fragments::script}"></div>
 
     <script th:src="@{/js/categories.js}"></script>
+    <script>
+        $(document).ready(function () {
+
+            ajaxGet();
+
+            function ajaxGet() {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/product/all",
+                    success: function (result) {
+                        $.each(result, function (i, danhMuc) {
+                            // var clas='my-product-image' + danhMuc.id;
+                            var danhMucRow = '<tr style="text-align: center;">' +
+                                '<td width="20%">' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.name + '</td>' +
+                                '<td>' + danhMuc.description + '</td>' +
+                                '<td>' + danhMuc.price + '</td>' +
+                                '<td>' + '<img class="my-product-image" style="height: 40px; width: 40px;" alt="">' + '</td>' +
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
+                                '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
+                            '</tr>';
+                            var $danhMucRow = $(danhMucRow); // Tạo một đối tượng jQuery từ chuỗi HTML
+
+                            var dataURI = 'data:image/jpeg;base64,' + danhMuc.image; // Đường dẫn base64 của ảnh
+
+                            $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
+
+                            $('.tblType tbody').append($danhMucRow);
+                            // $('.tblType tbody').append(danhMucRow);
+                        });
+
+
+                    },
+                    error: function (e) {
+                        alert("Error: ", e);
+                        console.log("Error", e);
+                    }
+                });
+            };
+
+            $(document).on('click', '.btnSaveForm', function (event) {
+                event.preventDefault();
+                ajaxPost();
+
+
+            });
+
+            $(document).on('click', '.addProduct', function (event) {
+                event.preventDefault();
+                $('#id').val("");
+                $('#name').val("");
+                $('#description').val("");
+                $('#price').val("");
+                $('#exampleAddCategoryModal').modal();
+                $('.btnUpdateForm').removeClass('btnUpdateForm').addClass('btnSaveForm');
+            });
+
+
+
+            function ajaxPost() {
+                // PREPARE FORM DATA
+                // var formData = {
+                //     name: $('#name').val(),
+                //     description: $('#description').val(),
+                //     price: $('#price').val(),
+                //     file: $('#image').val(),
+                //     type: $('#type').val()
+                // }
+                // var form = $('.addOtherForm')[0];
+                // var data = new FormData(form);
+                var formData = new FormData($('.addOtherForm')[0]);
+                console.log(formData)
+                // DO PUT
+                $.ajax({
+                    // async: false,
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "http://localhost:8888/api/product/save",
+                    enctype: 'multipart/form-data',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    // timeout: 1000000,
+                    success: function (response) {
+                        window.location.reload();
+                        alert("Thêm thành công");
+
+                    },
+                    error: function (e) {
+                        alert("Error!")
+                        console.log("ERROR: ", e);
+                    }
+                });
+            };
+
+            $(document).on("click", ".btnXoaDanhMuc", function () {
+
+                var danhMucId = $(this).parent().find('input').val();
+                var workingObject = $(this);
+
+                var confirmation = confirm("Bạn chắc chắn xóa danh mục này ?");
+                if (confirmation) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "http://localhost:8888/api/product/all/" + danhMucId,
+                        success: function (resultMsg) {
+                            //  resetDataForDelete();
+                            window.location.reload();
+                            alert("Xóa thành công");
+                        },
+                        error: function (e) {
+                            alert("Không thể xóa danh mục này ! Hãy kiểm tra lại");
+                            console.log("ERROR: ", e);
+                        }
+                    });
+                }
+            });
+
+            $(document).on("click", ".btnCapNhatDanhMuc", function () {
+                event.preventDefault();
+                var danhMucId = $(this).parent().find('input').val();
+                var href = "http://localhost:8888/api/product/all/" + danhMucId;
+                $.get(href, function (category, status) {
+
+                    //     name: $('#name').val(),
+                    //     description: $('#description').val(),
+                    //     price: $('#price').val(),
+                    //     file: $('#image').val(),
+                    //     type: $('#type').val()
+                    $('#id').val(category.id);
+                    $('#name').val(category.name);
+                    $('#description').val(category.description);
+                    $('#price').val(category.price);
+                    // $('#type').val(category.id);
+                    // $('#name').val(category.name);
+                    // $('#titleEdit').val(category.title);
+                });
+                $('#exampleAddCategoryModal').modal();
+                $('.btnSaveForm').removeClass('btnSaveForm').addClass('btnUpdateForm');
+
+            });
+
+            $(document).on('click', '.btnUpdateForm', function (event) {
+                event.preventDefault();
+                ajaxPut();
+
+            });
+
+
+            function ajaxPut() {
+                // PREPARE FORM DATA
+                // var formData = {
+                //     id: $('#id').val(),
+                //     name: $("#nameEdit").val(),
+                // }
+                var formData = new FormData($('.addOtherForm')[0]);
+                console.log(formData)
+                // DO PUT
+                $.ajax({
+                    // async: false,
+                    // type: "PUT",
+                    // contentType: "application/json",
+                    // url: "http://localhost:8888/api/product/all",
+                    // data: JSON.stringify(formData),
+                    // dataType : 'json',
+                    type: "PUT",
+                    contentType: "application/json",
+                    url: "http://localhost:8888/api/product/all",
+                    enctype: 'multipart/form-data',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function (response) {
+                        window.location.reload();
+                        alert("Cập nhật thành công");
+
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error!" + error);
+                        console.log("ERROR: ", error);
+                    }
+                });
+            };
+
+        });
+    </script>
 </body>
 
 </html>

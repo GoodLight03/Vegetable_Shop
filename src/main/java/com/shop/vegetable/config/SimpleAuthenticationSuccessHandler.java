@@ -26,14 +26,14 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		authorities.forEach(authority -> {
 			// nếu quyền có vai trò user, chuyển đến trang "/" nếu login thành công
-			if (authority.getAuthority().equals("ROLE_CUSTOMER")) {
+			if (authority.getAuthority().equals("CUSTOMER")) {
 				try {
 					redirectStrategy.sendRedirect(request, response, "/");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else if (authority.getAuthority().contains("ROLE_ADMIN")) {
+			} else if (authority.getAuthority().contains("ADMIN")) {
 				try {
 					redirectStrategy.sendRedirect(request, response, "/admin");
 				} catch (Exception e) {

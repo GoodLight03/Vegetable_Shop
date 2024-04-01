@@ -6,6 +6,8 @@ import lombok.*;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -27,9 +29,12 @@ public class Order {
     private String paymentMethod;
     private boolean isAccept;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id", referencedColumnName = "users_id")
     private Users users;
+
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderDetail> orderDetailList;
 

@@ -23,13 +23,13 @@
                 <!-- Topbar -->
                 <nav th:replace="~{fragment/fragments::topbar}"></nav>
                 <!-- End of Topbar -->
-                <form th:action="@{/search-type}" method="get"
-                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <!-- <form th:action="@{/search-type}" method="get" -->
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
-                        <input type="text" name="keyword" class="form-control bg-light border-0 small"
+                        <input type="text" id="key" name="key" class="form-control bg-light border-0 small"
                             placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary btnSearchDanhMuc">
                                 <i class="fas fa-search fa-sm"></i>
                             </button>
                         </div>
@@ -50,7 +50,7 @@
                     <p th:text="${error}"></p>
                 </div>
 
-                <table class="table table-striped" th:if="${size > 0}">
+                <table class="table table-striped tblType" th:if="${size > 0}">
                     <thead>
                         <tr>
                             <th scope="col">User Index</th>
@@ -59,23 +59,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="users : ${courses}">
+                        <!-- <tr th:each="users : ${courses}">
                             <th scope="row" th:text="${users.id}"></th>
                             <td th:text="${users.name}"></td>
 
-                            <!-- <td>
+                            //
+                            <td>
                                 <a id="editButton"
                                    th:href="@{/findById(id = ${users.id})}"
                                    class="btn btn-primary">Update</a>
-                            </td> -->
+                            </td>
 
                             <td>
-                                <!-- <a id="editButton" th:href="@{/findById(id = ${users.id})}"
-                                    class="btn btn-primary">Update</a> -->
+                                //
+                                <a id="editButton" th:href="@{/findById(id = ${users.id})}"
+                                    class="btn btn-primary">Update</a>
                                 
                                 <a th:href="@{/delete-type(id = ${users.id})}" class=" btn btn-danger">Delete</a>
                             </td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                 </table>
 
@@ -103,16 +105,18 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleAddCategoryModalLabel">New Type</h5>
                 </div>
-                <div class="modal-body">
-                    <form th:action="@{/save-type}" method="post" th:object="${courseDto}"
-                        enctype="multipart/form-data">
+                <div class="modal-body addTypee">
+                    <!-- <form th:action="@{/save-type}" method="post" th:object="${courseDto}"
+                        enctype="multipart/form-data"> -->
+                    <form>
                         <div class="form-group">
                             <label for="name" class="col-form-label">Type Name:</label>
-                            <input type="text" class="form-control" id="name" th:field="*{name}" name="name">
+                            <!-- <input type="text" class="form-control" id="name" th:field="*{name}" name="name"> -->
+                            <input type="text" class="form-control" id="name" name="name">
                         </div>
 
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary btnSaveForm">Save</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -132,7 +136,8 @@
                     <h5 class="modal-title" id="exampleModalLabel">Edit Type</h5>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/update-type}" method="put">
+                    <!-- <form th:action="@{/update-type}" method="put"> -->
+                    <form>
                         <div class="form-group">
                             <label for="idEdit" class="col-form-label">ID
                             </label> <input type="text" class="form-control" id="idEdit" name="id" readonly>
@@ -141,7 +146,7 @@
                             <label for="nameEdit" class="col-form-label">Category
                                 Name</label> <input type="text" class="form-control" id="nameEdit" name="name">
                         </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary btnUpdateForm">Save</button>
                     </form>
                 </div>
             </div>
@@ -152,6 +157,171 @@
     <div th:replace="~{fragment/fragments::script}"></div>
 
     <script th:src="@{/js/categories.js}"></script>
+    <script>
+        $(document).ready(function () {
+
+            ajaxGet();
+
+            function ajaxGet() {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/type/all",
+                    success: function (result) {
+                        $.each(result, function (i, danhMuc) {
+                            var danhMucRow = '<tr style="text-align: center;">' +
+                                '<td width="20%">' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.name + '</td>' +
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
+                                '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
+                            '</tr>';
+                            $('.tblType tbody').append(danhMucRow);
+                        });
+
+
+                    },
+                    error: function (e) {
+                        alert("Error: ", e);
+                        console.log("Error", e);
+                    }
+                });
+            };
+
+            function ajaxGetF(key) {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/type/find/"+key,
+                    success: function (result) {
+                        $.each(result, function (i, danhMuc) {
+                            var danhMucRow = '<tr style="text-align: center;">' +
+                                '<td width="20%">' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.name + '</td>' +
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
+                                '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
+                            '</tr>';
+                            $('.tblType tbody').append(danhMucRow);
+                        });
+
+
+                    },
+                    error: function (e) {
+                        alert("Error: ", e);
+                        console.log("Error", e);
+                    }
+                });
+            };
+
+            
+            $(document).on("click", ".btnXoaDanhMuc", function () {
+
+                var danhMucId = $(this).parent().find('input').val();
+                var workingObject = $(this);
+
+                var confirmation = confirm("Bạn chắc chắn xóa danh mục này ?");
+                if (confirmation) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "http://localhost:8888/api/type/all/" + danhMucId,
+                        success: function (resultMsg) {
+                            //  resetDataForDelete();
+                            window.location.reload();
+                            alert("Xóa thành công");
+                        },
+                        error: function (e) {
+                            alert("Không thể xóa danh mục này ! Hãy kiểm tra lại");
+                            console.log("ERROR: ", e);
+                        }
+                    });
+                }
+            });
+
+            $(document).on("click", ".btnSearchDanhMuc", function () {
+                event.preventDefault();
+                $('.tblType tbody').empty();
+                ajaxGetF($('#key').val());
+
+            });
+
+            $(document).on("click", ".btnCapNhatDanhMuc", function () {
+                event.preventDefault();
+                var danhMucId = $(this).parent().find('input').val();
+                var href = "http://localhost:8888/api/type/all/" + danhMucId;
+                $.get(href, function (category, status) {
+                    $('#idEdit').val(category.id);
+                    $('#nameEdit').val(category.name);
+                    // $('#titleEdit').val(category.title);
+                });
+                $('#editModal').modal();
+            });
+
+            $(document).on('click', '.btnUpdateForm', function (event) {
+                event.preventDefault();
+                ajaxPut();
+
+            });
+
+
+            function ajaxPut() {
+                // PREPARE FORM DATA
+                var formData = {
+                    id: $('#idEdit').val(),
+                    name: $("#nameEdit").val(),
+                }
+                // DO PUT
+                $.ajax({
+                    async: false,
+                    type: "PUT",
+                    contentType: "application/json",
+                    url: "http://localhost:8888/api/type/update",
+                    data: JSON.stringify(formData),
+                    // dataType : 'json',
+                    success: function (response) {
+                        window.location.reload();
+                        alert("Cập nhật thành công");
+
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error!" + error);
+                        console.log("ERROR: ", error);
+                    }
+                });
+            };
+
+            $(document).on('click', '.btnSaveForm', function (event) {
+                event.preventDefault();
+                ajaxPost();
+
+
+            });
+
+            function ajaxPost() {
+                // PREPARE FORM DATA
+                var formData = {
+                    name: $('#name').val(),
+                }
+                // DO PUT
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "http://localhost:8888/api/type/save",
+                    data: JSON.stringify(formData),
+                    // dataType : 'json',
+                    success: function (response) {
+                        window.location.reload();
+                        alert("Thêm thành công");
+
+                    },
+                    error: function (e) {
+                        alert("Error!")
+                        console.log("ERROR: ", e);
+                    }
+                });
+            };
+
+        });
+    </script>
 </body>
 
 </html>

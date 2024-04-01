@@ -160,7 +160,13 @@ public class OrderController {
       }
 
     }
-    List<Order> orders = orderService.findAll(principal.getName());
+    List<Order> orders;
+    if(principal.getName().equals("Admin")){
+        orders= orderService.findALlOrders();
+    }else{
+        orders= orderService.findAll(principal.getName());
+    }
+     
     Order order=null;
     
     for (Order order2 : orders) {

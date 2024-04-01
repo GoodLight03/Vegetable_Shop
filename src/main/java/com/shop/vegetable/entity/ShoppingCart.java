@@ -10,6 +10,8 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data
 @AllArgsConstructor
 // @NoArgsConstructor
@@ -28,6 +30,7 @@ public class ShoppingCart {
 
     private int totalItems;
 
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.DETACH, mappedBy = "cart")
     private Set<CartItem> cartItems;
 

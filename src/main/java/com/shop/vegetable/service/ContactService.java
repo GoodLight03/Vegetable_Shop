@@ -17,4 +17,6 @@ public interface ContactService {
     List<Contact> findAll();
 
     int update(String reply, Date repDate, Long id);
+
+    Contact updateAll(Contact contact);
 }

@@ -2,6 +2,9 @@ package com.shop.vegetable.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +29,8 @@ public class Type {
     @Column(name = "type_id")
     private Long id;
     private String name;
-
-    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
+    @JsonBackReference
+    //@JsonManagedReference
+    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)  
     private List<Product> products;
 }

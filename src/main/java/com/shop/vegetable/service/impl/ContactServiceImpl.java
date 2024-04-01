@@ -44,5 +44,11 @@ public class ContactServiceImpl implements ContactService {
     public int update(String reply, Date repDate, Long id) {
         return contactRepository.updateUserSetStatusForName(reply, repDate, id);
     }
+
+    @Override
+    public Contact updateAll(Contact contact) {
+        // TODO Auto-generated method stub
+        return contactRepository.save(contact);
+    }
     
 }

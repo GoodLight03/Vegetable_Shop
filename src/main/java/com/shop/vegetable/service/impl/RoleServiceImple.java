@@ -16,7 +16,7 @@ public class RoleServiceImple implements RoleService{
     private final RoleRepository roleRepository;
 
     @Override
-    public Role save(RoleDto roleDto) {
+    public Role save(Role roleDto) {
         Role rl=new Role();
         rl.setName(roleDto.getName());
         return roleRepository.save(rl);
@@ -26,6 +26,11 @@ public class RoleServiceImple implements RoleService{
     public List<Role> findALl() {
         // TODO Auto-generated method stub
         return roleRepository.findALl();
+    }
+
+    @Override
+    public Role findByNameRole(String name) {
+        return roleRepository.findByName(name);
     }
     
 }

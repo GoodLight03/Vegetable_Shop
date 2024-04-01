@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TypeDto {
+    private long id;
     // @Size(min = 3, max = 10, message = "User name contains 3-10 characters")
     private String name;
 

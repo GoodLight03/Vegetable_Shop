@@ -1,5 +1,9 @@
 package com.shop.vegetable.dto;
 
+import java.io.Serializable;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.shop.vegetable.entity.Type;
 
 import lombok.AllArgsConstructor;
@@ -9,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class ProductDto implements Serializable{
     private Long id;
     // @Size(min = 3, max = 10, message = "User name contains 3-10 characters")
     private String name;
@@ -17,4 +21,6 @@ public class ProductDto {
     private float price;
     private String image;
     private Type type;
+
+    private MultipartFile file;
 }

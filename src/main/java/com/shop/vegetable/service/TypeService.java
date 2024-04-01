@@ -13,6 +13,7 @@ public interface TypeService {
 
     Optional<Type> findById(Long id);
 
+    // void update(Long id,Type course);
     Type update(Type course);
 
     void delete(Long id);

@@ -73,7 +73,7 @@ public class ContactController {
     if (principal != null) { 
       Users users = userService.findByUsername(principal.getName());
       lh.setDayContact(new Date());
-      lh.setUser(users);
+      lh.setUsers(users);
       lh.setStatus("Chưa trả lời");
 		  contactService.save(lh);
       redirectAttributes.addAttribute("success", "Sent contact Success!");

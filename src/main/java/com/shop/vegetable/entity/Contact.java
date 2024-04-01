@@ -53,5 +53,5 @@ public class Contact {
 	@JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id", referencedColumnName = "users_id")
-	private Users user;
+	private Users users;
 }

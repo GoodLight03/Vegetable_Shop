@@ -67,7 +67,7 @@ public class ClientController {
   public String homes(Model model, Principal principal, Authentication authentication, HttpSession session) {
     List<Role> roles = roleService.findALl();
     if (roles.isEmpty()) {
-      addAdminAndCustomer();
+     // addAdminAndCustomer();
     }
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
@@ -112,16 +112,16 @@ public class ClientController {
     return "client/home";
   }
 
-  public void addAdminAndCustomer(){
-    RoleDto adminRole = new RoleDto();
-    adminRole.setName("ADMIN");
-    roleService.save(adminRole);
-    userService.saveAD();
+  // public void addAdminAndCustomer(){
+  //   RoleDto adminRole = new RoleDto();
+  //   adminRole.setName("ADMIN");
+  //   roleService.save(adminRole);
+  //   userService.saveAD();
 
-    RoleDto customerRole = new RoleDto();
-    customerRole.setName("CUSTOMER");
-    roleService.save(customerRole);
-  }
+  //   RoleDto customerRole = new RoleDto();
+  //   customerRole.setName("CUSTOMER");
+  //   roleService.save(customerRole);
+  // }
 
   @GetMapping("/admin")
   public String ad() {
@@ -187,7 +187,7 @@ public class ClientController {
     model.addAttribute("lstcomment", comments);
     model.addAttribute("product", productbs);
     model.addAttribute("commentDto", new CommentDto());
-
+    model.addAttribute("currentPages", "shop");
     return "client/detail";
   }
 

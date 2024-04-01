@@ -2,6 +2,8 @@ package com.shop.vegetable.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,16 +41,20 @@ public class Product {
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id", referencedColumnName = "type_id")
     private Type type;
 
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<OrderDetail> orderDetailList;
 
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<CartItem> cartiterms;
 
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<Comment> comments;
 }

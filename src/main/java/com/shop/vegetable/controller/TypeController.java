@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class TypeController {
     private final TypeService typeService;
 
-    @RequestMapping("/type")
+    @GetMapping("/type")
     public String lst(Model model) {
         model.addAttribute("title", "Manage Course");
         List<Type> types = typeService.findAll();
@@ -43,6 +44,7 @@ public class TypeController {
         return "admin/type";
     }
 
+    
 
     @PostMapping("/save-type")
     public String addLevel(@ModelAttribute("courseDto") TypeDto typeDto,
@@ -65,6 +67,7 @@ public class TypeController {
     }
 
     @GetMapping("/update-type")
+    // @PutMapping("/update-type")
     public String update(Type course, RedirectAttributes redirectAttributes) {
         try {
             typeService.update(course);
