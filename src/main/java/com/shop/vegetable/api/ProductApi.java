@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,9 +53,17 @@ public class ProductApi {
 
     }
 
+    @GetMapping("/page/{page}")
+    public ResponseEntity<Page<ProductDto>> findTypeByPage(@PathVariable int page) {
+        Page<ProductDto> products = productService.getAllProducts(page);
+
+        return ResponseEntity.ok(products);
+
+    }
+
     @PostMapping("/save")
     public ResponseEntity<Product> addType(@ModelAttribute ProductDto productDto) {
-        Product mcd = productService.save(productDto.getFile(),productDto);
+        Product mcd = productService.save(productDto.getFile(), productDto);
         try {
             return ResponseEntity.created(new URI("/api/product/save/" + mcd.getId())).body(mcd);
 
@@ -66,7 +75,7 @@ public class ProductApi {
     @PutMapping("/all")
     public ResponseEntity<Void> updateType(@ModelAttribute ProductDto productDto) {
         try {
-            productService.update(productDto.getFile(),productDto);
+            productService.update(productDto.getFile(), productDto);
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.notFound().build();

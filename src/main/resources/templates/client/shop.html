@@ -209,9 +209,10 @@
                             </div>
                         </div>
                         <div class="col-lg-9">
-                            <div class="row g-4 justify-content-center">
-                                <div th:each="users : ${product}" class="col-md-6 col-lg-6 col-xl-4">
-                                    <form th:action="@{/add-to-cart}" method="post">
+                            <div class="row g-4 justify-content-center tblType">
+                                <!-- <div th:each="users : ${product}" class="col-md-6 col-lg-6 col-xl-4"> -->
+                                <!-- <div class="col-md-6 col-lg-6 col-xl-4 "> -->
+                                <!-- <form th:action="@{/add-to-cart}" method="post">
                                         <div class="rounded position-relative fruite-item">
                                             <div class="fruite-img">
                                                 <img th:src="'data:image/jpeg;base64,' + ${users.image}"
@@ -239,8 +240,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </form> -->
+                                <!-- </div> -->
                                 <!--Pagination  -->
                                 <!-- <nav aria-label="...">
                                     <ul class="pagination">
@@ -262,15 +263,17 @@
                                 </nav> -->
                                 <!--Pagination  -->
 
-                                <div class="col-12">
-                                    <div class="pagination d-flex justify-content-center mt-5">
-                                        <p>
+                                <!-- <div class="col-12">
+                                    <div class="pagination d-flex justify-content-center mt-5 pagination"> -->
+                                        <!-- <p>
                                             <a th:if="${currentPage != 0}"
                                                 th:href="@{'/shop?pageNo=' + ${currentPage - 1}}"
                                                 class="rounded">&laquo;</a>
                                         </p>
                                         <p th:each="i : ${#numbers.sequence(1, totalPages)}">
-                                            <a th:href="@{'/shop?pageNo=' + ${i - 1}}" th:classappend="${currentPage == i - 1 ? 'active' : ''}" class="rounded">
+                                            <a th:href="@{'/shop?pageNo=' + ${i - 1}}"
+                                                th:classappend="${currentPage == i - 1 ? 'active' : ''}"
+                                                class="rounded">
                                                 <span th:text="${i}">
                                                 </span>
                                             </a>
@@ -279,9 +282,9 @@
                                             <a th:if="${currentPage + 1 != totalPages}"
                                                 th:href="@{'/shop?pageNo=' + ${currentPage + 1}}"
                                                 class="rounded">&raquo;</a>
-                                        </p>
-                                    </div>
-                                </div>
+                                        </p> -->
+                                    <!-- </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -293,6 +296,104 @@
 
     <div th:replace="fragment/fragment::footer"></div>
     <div th:replace="fragment/fragment::script"></div>
+    <script>
+        $(document).ready(function () {
+
+            ajaxGet(1);
+
+            function ajaxGet(page) {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/product/page/" + page,
+                    success: function (result) {
+                        $.each(result.content, function (i, danhMuc) {
+
+                            var danhMucRow = '<div class="col-md-6 col-lg-6 col-xl-4 trr"><form >' +
+                                '<div class="rounded position-relative fruite-item">' +
+                                '<div class="fruite-img">' +
+                                '<img style="height: 250px" class="img-fluid w-100 rounded-top my-product-image" alt="">' +
+                                ' </div>' +
+                                '<div class="text-white bg-secondary px-3 py-1 rounded position-absolute "' +
+                                ' style="top: 10px; left: 10px;" text="' + danhMuc.type.name + '"><p class="Type"></p></div>' +
+                                '<div class="p-4 border border-secondary border-top-0 rounded-bottom">' +
+                                '<h4 th:text="' + danhMuc.name + '"></h4>' +
+                                '<div style="height: 200px">' +
+                                '<p th:text="' + danhMuc.description + '"></p>' +
+                                '<p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do' +
+                                'eiusmod te incididunt</p>' +
+                                '<a href="/detail?id=' + danhMuc.id + '">Show More...</a>' +
+                                ' </div>' +
+                                '<div class="d-flex justify-content-between flex-lg-wrap">' +
+                                ' <p class="text-dark fs-5 fw-bold mb-0"' +
+                                ' th:text="' + '$' + danhMuc.price + '/kg"></p>' +
+                                ' <input type="hidden" value=' + danhMuc.id + ' name="id"' +
+                                '  class="form-control">' +
+                                '  <button type="submit"' +
+                                'class="btn border border-secondary rounded-pill px-3 text-primary"><i' +
+                                ' class="fa fa-shopping-bag me-2 text-primary"></i> Add to' +
+                                'cart</button>' +
+                                ' </div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</form></div>';
+
+                            var $danhMucRow = $(danhMucRow); // Tạo một đối tượng jQuery từ chuỗi HTML
+
+                            var dataURI = 'data:image/jpeg;base64,' + danhMuc.image; // Đường dẫn base64 của ảnh
+
+                            $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
+
+                            $danhMucRow.find('.Type').text(danhMuc.type.name);
+
+                            $('.tblType').append($danhMucRow);
+                            // $('.tblType tbody').append(danhMucRow);
+                        });
+
+                        $('.tblType').append('<div class="col-12"><div class="pagination d-flex justify-content-center mt-5 pagination"></div></div>');
+
+                        if (result.totalPages > 1) {
+                            for (var numberPage = 1; numberPage <= result.totalPages; numberPage++) {
+                                // var li = '<li class="page-item "><a class="pageNumber">' + numberPage + '</a></li>';
+                                // <p th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                var li = '<p><a class="rounded pageNumber">' +
+                                    '<span class="number" text="' + numberPage + '">' +
+                                    ' </span>' +
+                                    '</a></p>';
+                                // </p>
+
+                                var $li = $(li);
+                                $li.find('.number').text(numberPage);
+
+                                $('.pagination').append($li);
+                            };
+
+
+                            // active page pagination
+                            $(".number").each(function (index) {
+                                if ($(this).text() == (parseInt(page, 10))) {
+                                    $(this).parent().removeClass().addClass("rounded pageNumber active");
+                                }
+                            });
+                        };
+
+                    },
+                    error: function (e) {
+                        alert("Error: ", e);
+                        console.log("Error", e);
+                    }
+                });
+            };
+
+            $(document).on('click', '.number', function (event) {
+                event.preventDefault();
+                var page = $(this).text();
+                $('.tblType div').remove();
+                $('.pagination p').remove();
+                ajaxGet(page);
+            });
+
+        })
+    </script>
 </body>
 
 </html>

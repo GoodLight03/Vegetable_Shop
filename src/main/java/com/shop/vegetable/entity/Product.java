@@ -41,7 +41,7 @@ public class Product {
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
-    @JsonBackReference
+    // @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id", referencedColumnName = "type_id")
     private Type type;

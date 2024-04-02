@@ -126,7 +126,7 @@ public class ProductServiceImple implements ProductService {
     public Page<ProductDto> searchProducts(int pageNo, String keyword) {
         List<Product> products = ProductRepository.findAllByNameOrDescription(keyword);
         List<ProductDto> productDtoList = transferData(products);
-        Pageable pageable = PageRequest.of(pageNo, 5);
+        Pageable pageable = PageRequest.of(pageNo, 3);
         Page<ProductDto> dtoPage = toPage(productDtoList, pageable);
         return dtoPage;
     }
@@ -140,7 +140,7 @@ public class ProductServiceImple implements ProductService {
 
     @Override
     public Page<ProductDto> getAllProducts(int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo, 6);
+        Pageable pageable = PageRequest.of(pageNo-1, 3);
         List<ProductDto> productDtoLists = this.allProduct();
         Page<ProductDto> productDtoPage = toPage(productDtoLists, pageable);
         return productDtoPage;

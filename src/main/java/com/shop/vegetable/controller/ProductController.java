@@ -52,6 +52,7 @@ public class ProductController {
         model.addAttribute("course", types);
         model.addAttribute("size", productDtos.size());
         model.addAttribute("levelDto", new ProductDto());
+        model.addAttribute("currentPages", "products");
         return "admin/product";
 
     }

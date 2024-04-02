@@ -64,6 +64,7 @@ public class ContactController {
     model.addAttribute("courses", courses);
     model.addAttribute("currentPages", "contact");
     model.addAttribute("contact", new Contact());
+   
     return "client/contact";
   }
 
@@ -89,7 +90,7 @@ public class ContactController {
         List<Contact> contacts = contactService.findAll();
         model.addAttribute("courses", contacts);
         model.addAttribute("size", contacts.size());
-        //model.addAttribute("usernew", new Users());
+        model.addAttribute("currentPages", "contacts");
         return "admin/lstcontact";
     }
 

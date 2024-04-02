@@ -41,6 +41,7 @@ public class TypeController {
         model.addAttribute("size", types.size());
         model.addAttribute("usernew", new Users());
         model.addAttribute("courseDto", new TypeDto());
+        model.addAttribute("currentPages", "types");
         return "admin/type";
     }
 

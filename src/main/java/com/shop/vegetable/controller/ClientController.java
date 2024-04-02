@@ -124,8 +124,10 @@ public class ClientController {
   // }
 
   @GetMapping("/admin")
-  public String ad() {
+  public String ad(Model model) {
+    model.addAttribute("currentPages", "admin");
     return "admin/indexAd";
+
   }
 
   

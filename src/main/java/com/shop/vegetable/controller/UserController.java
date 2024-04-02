@@ -40,6 +40,7 @@ public class UserController {
         model.addAttribute("usersss", userss);
         model.addAttribute("size", userss.size());
         model.addAttribute("usernew", new Users());
+        model.addAttribute("currentPages", "users");
         return "admin/users";
 
     }

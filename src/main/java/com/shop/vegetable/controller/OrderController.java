@@ -119,6 +119,7 @@ public class OrderController {
             model.addAttribute("title", "Order");
             model.addAttribute("page", "Order");
             model.addAttribute("size", orderList.size());
+            model.addAttribute("currentPages", "orders");
             return "admin/ordersAD";
         }
     }
