@@ -42,7 +42,10 @@
     </div>
     <!-- Single Page Header End -->
 
-
+    <div th:if="${success}" class="text-center alert alert-success">
+        <p th:text="${success}">
+        </p>
+    </div>
     <!-- Cart Page Start -->
     <div class="container-fluid py-5">
         <div class="container py-5">

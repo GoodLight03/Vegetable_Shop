@@ -22,6 +22,41 @@
 
                 <!-- Topbar -->
                 <nav th:replace="~{fragment/fragments::topbar}"></nav>
+
+                <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <div class="input-group">
+                        <input type="text" id="key" name="key" class="form-control bg-light border-0 small"
+                            placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btnSearchDanhMuc">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+
+                        <h5 style="margin-left: 100px;margin-right: 10px;" class="modal-title" id="">Filter by Type:
+                        </h5>
+                        <select id="my-select" name="type" class="form-control">
+                            <option th:value="null">-All-</option>
+                            <option th:each="category : ${course}" th:value="${category.id}" th:text="${category.name}">
+                            </option>
+                        </select>
+
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btnTangGia">
+
+                                <i class="fas fa fa-solid fa-up-long">Price Up</i>
+                            </button>
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btnGiamGia">
+                                <i class="fas fa fa-solid fa-down-long">Price Down</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="input-group">
+
+                </div>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -42,8 +77,8 @@
                         <tr>
                             <th scope="col">User Index</th>
                             <th scope="col">Product Name</th>
-                            <th scope="col">Product Price</th>
                             <th scope="col">Product Description</th>
+                            <th scope="col">Product Price</th>
                             <!-- <th scope="col">Product Type</th> -->
                             <th scope="col">Product Img</th>
                             <th scope="col">Action</th>
@@ -70,7 +105,10 @@
                         </tr> -->
                     </tbody>
                 </table>
-
+                <div class="" style="text-align: center">
+                    <ul class="pagination">
+                    </ul>
+                </div>
 
                 <!-- End of Main Content -->
 
@@ -101,8 +139,7 @@
                         enctype="multipart/form-data"> -->
                     <form class="addOtherForm">
                         <div>
-                            <input  class="form-control" name="id"
-                                id="id" readonly="true">
+                            <input class="form-control" name="id" id="id" readonly="true">
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-form-label">Product Name:</label>
@@ -195,7 +232,7 @@
             function ajaxGet() {
                 $.ajax({
                     type: "GET",
-                    url: "http://localhost:8888/api/product/all",
+                    url: "http://localhost:8888/api/product/allAdmin",
                     success: function (result) {
                         $.each(result, function (i, danhMuc) {
                             // var clas='my-product-image' + danhMuc.id;
@@ -206,6 +243,7 @@
                                 '<td>' + danhMuc.price + '</td>' +
                                 '<td>' + '<img class="my-product-image" style="height: 40px; width: 40px;" alt="">' + '</td>' +
                                 '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-warning btnHientDanhMuc" >' + danhMuc.status + '</button>'
                                 + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
                                 '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
                             '</tr>';
@@ -215,10 +253,13 @@
 
                             $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
 
+                            if(danhMuc.status=='Disable'){
+                                $danhMucRow.find('.btnHientDanhMuc').removeClass().addClass("btn btn-secondary btnHientDanhMuc");
+                            }
+
                             $('.tblType tbody').append($danhMucRow);
                             // $('.tblType tbody').append(danhMucRow);
                         });
-
 
                     },
                     error: function (e) {
@@ -231,9 +272,15 @@
             $(document).on('click', '.btnSaveForm', function (event) {
                 event.preventDefault();
                 ajaxPost();
-
-
             });
+
+            // $(document).on('click', '.pageNumber', function (event) {
+            //     event.preventDefault();
+            //     var page = $(this).text();
+            //     $('.tblType tbody tr').remove();
+            //     $('.pagination li').remove();
+            //     ajaxGet(page);
+            // });
 
             $(document).on('click', '.addProduct', function (event) {
                 event.preventDefault();
@@ -307,6 +354,28 @@
                 }
             });
 
+            $(document).on("click", ".btnHientDanhMuc", function () {
+
+                var danhMucId = $(this).parent().find('input').val();
+                var workingObject = $(this);
+
+                
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:8888/api/product/Disable/" + danhMucId,
+                        success: function (resultMsg) {
+                            //  resetDataForDelete();
+                            window.location.reload();
+                            //alert("Xóa thành công");
+                        },
+                        error: function (e) {
+                            //alert("Không thể xóa danh mục này ! Hãy kiểm tra lại");
+                            console.log("ERROR: ", e);
+                        }
+                    });
+                
+            });
+
             $(document).on("click", ".btnCapNhatDanhMuc", function () {
                 event.preventDefault();
                 var danhMucId = $(this).parent().find('input').val();
@@ -374,6 +443,119 @@
                 });
             };
 
+            function ajaxGetF(key) {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/product/find/" + key,
+                    success: function (result) {
+                        $.each(result, function (i, danhMuc) {
+                            var danhMucRow = '<tr style="text-align: center;">' +
+                                '<td width="20%">' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.name + '</td>' +
+                                '<td>' + danhMuc.description + '</td>' +
+                                '<td>' + danhMuc.price + '</td>' +
+                                '<td>' + '<img class="my-product-image" style="height: 40px; width: 40px;" alt="">' + '</td>' +
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-warning btnHientDanhMuc" >' + danhMuc.status + '</button>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
+                                '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>' +
+                                '</tr>';
+                            var $danhMucRow = $(danhMucRow); // Tạo một đối tượng jQuery từ chuỗi HTML
+
+                            var dataURI = 'data:image/jpeg;base64,' + danhMuc.image; // Đường dẫn base64 của ảnh
+
+                            $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
+                            if(danhMuc.status=='Disable'){
+                                $danhMucRow.find('.btnHientDanhMuc').removeClass().addClass("btn btn-secondary btnHientDanhMuc");
+                            }
+
+                            $('.tblType tbody').append($danhMucRow);
+                        });
+
+
+                    },
+                    error: function (e) {
+                        alert("Error: ", e);
+                        console.log("Error", e);
+                    }
+                });
+            };
+
+            $(document).on("click", ".btnSearchDanhMuc", function () {
+                event.preventDefault();
+                $('.tblType tbody').empty();
+                ajaxGetF($('#key').val());
+
+            });
+
+            $(document).on("click", ".btnTangGia", function () {
+                event.preventDefault();
+                var url = 'http://localhost:8888/api/product/all/asc';
+
+                sendSelectedOption(url);
+
+            });
+
+            $(document).on("click", ".btnGiamGia", function () {
+                event.preventDefault();
+                var url = 'http://localhost:8888/api/product/all/desc';
+
+                sendSelectedOption(url);
+
+            });
+
+
+
+            $('#my-select').on('change', function () {
+                var selectedOption = $(this).val();
+                console.log(selectedOption);
+                var url = 'http://localhost:8888/api/product/typeAdmin';
+                if (selectedOption !== '') {
+                    url += '?id=' + selectedOption;
+                }
+                sendSelectedOption(url);
+
+            });
+
+            function sendSelectedOption(url) {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    //data: { id: option },
+                    success: function (result) {
+                        $('.tblType tbody').empty();
+                        $.each(result, function (i, danhMuc) {
+                            var danhMucRow = '<tr style="text-align: center;">' +
+                                '<td width="20%">' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.name + '</td>' +
+                                '<td>' + danhMuc.description + '</td>' +
+                                '<td>' + danhMuc.price + '</td>' +
+                                '<td>' + '<img class="my-product-image" style="height: 40px; width: 40px;" alt="">' + '</td>' +
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-warning btnHientDanhMuc" >' + danhMuc.status + '</button>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
+                                '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
+                            '</tr>';
+                            var $danhMucRow = $(danhMucRow); // Tạo một đối tượng jQuery từ chuỗi HTML
+
+                            var dataURI = 'data:image/jpeg;base64,' + danhMuc.image; // Đường dẫn base64 của ảnh
+
+                            $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
+                            if(danhMuc.status=='Disable'){
+                                $danhMucRow.find('.btnHientDanhMuc').removeClass().addClass("btn btn-secondary btnHientDanhMuc");
+                            }
+
+                            $('.tblType tbody').append($danhMucRow);
+                        });
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.log(error);
+                    }
+                });
+            }
         });
     </script>
 </body>

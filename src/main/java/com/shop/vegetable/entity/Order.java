@@ -29,12 +29,12 @@ public class Order {
     private String paymentMethod;
     private boolean isAccept;
 
-    @JsonBackReference
+    // @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id", referencedColumnName = "users_id")
     private Users users;
 
-    @JsonBackReference
+    // @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderDetail> orderDetailList;
 

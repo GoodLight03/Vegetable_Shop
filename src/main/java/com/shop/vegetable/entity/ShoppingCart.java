@@ -30,7 +30,7 @@ public class ShoppingCart {
 
     private int totalItems;
 
-    @JsonBackReference
+    // @JsonBackReference
     @OneToMany(cascade = CascadeType.DETACH, mappedBy = "cart")
     private Set<CartItem> cartItems;
 

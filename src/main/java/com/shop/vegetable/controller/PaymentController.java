@@ -17,7 +17,7 @@ import java.util.TimeZone;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shop.vegetable.config.Config;
+import com.shop.vegetable.config.vppay.Config;
 import com.shop.vegetable.dto.PaymentResDto;
 import com.shop.vegetable.dto.TransactionStatusDto;
 

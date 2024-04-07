@@ -1,5 +1,6 @@
 package com.shop.vegetable.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,7 @@ import com.shop.vegetable.service.OrderService;
 import com.shop.vegetable.service.ShoppingCartService;
 import com.shop.vegetable.service.UserService;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +79,7 @@ public class OrderController {
             return "redirect:/login";
         } else {
             model.addAttribute("namelogin", principal.getName());
-            Users  users= userService.findByUsername(principal.getName());
+            Users users = userService.findByUsername(principal.getName());
             List<Role> roles = users.getRoles();
             if (roles.size() == 1) {
                 model.addAttribute("rolelogin", roles.get(0).getName());
@@ -106,12 +108,12 @@ public class OrderController {
             List<Order> orderList = orderService.findALlOrders();
             double totalPrice = 0.0;
             for (Order ordd : orderList) {
-                totalPrice+=ordd.getTotalPrice();
+                totalPrice += ordd.getTotalPrice();
             }
 
-            int quantitys=0;
+            int quantitys = 0;
             for (Order ordd : orderList) {
-                quantitys+=ordd.getQuantity();
+                quantitys += ordd.getQuantity();
             }
             model.addAttribute("quantitys", quantitys);
             model.addAttribute("totalPrice", totalPrice);
@@ -134,7 +136,7 @@ public class OrderController {
     @RequestMapping(value = "/add-order", method = { RequestMethod.POST })
     public String createOrder(Principal principal,
             Model model,
-            HttpSession session) {
+            HttpSession session,RedirectAttributes attributes) {
         if (principal == null) {
             return "redirect:/login";
         } else {
@@ -145,47 +147,60 @@ public class OrderController {
             model.addAttribute("order", order);
             model.addAttribute("title", "Order Detail");
             model.addAttribute("page", "Order Detail");
-            model.addAttribute("success", "Add order successfully");
+            //model.addAttribute("success", "Add order successfully");
+            attributes.addFlashAttribute("success", "You have placed your order successfully, thank you!");
             return "redirect:/orders";
         }
     }
 
     @GetMapping("/order-detail")
-  public String dt(Long id, Model model, Principal principal, Authentication authentication) {
-    if (principal != null) {
-      model.addAttribute("namelogin", principal.getName());
-      Users users = userService.findByUsername(principal.getName());
-      List<Role> roles = users.getRoles();
-      if (roles.size() == 1) {
-        model.addAttribute("rolelogin", roles.get(0).getName());
-      }
+    public String dt(Long id, Model model, Principal principal, Authentication authentication) {
+        if (principal != null) {
+            model.addAttribute("namelogin", principal.getName());
+            Users users = userService.findByUsername(principal.getName());
+            List<Role> roles = users.getRoles();
+            if (roles.size() == 1) {
+                model.addAttribute("rolelogin", roles.get(0).getName());
+            }
 
+        }
+        List<Order> orders;
+        if (principal.getName().equals("Admin")) {
+            orders = orderService.findALlOrders();
+        } else {
+            orders = orderService.findAll(principal.getName());
+        }
+
+        Order order = null;
+
+        for (Order order2 : orders) {
+            if (order2.getId().equals(id)) {
+                order = order2;
+            }
+        }
+        if (order == null) {
+            throw new RecordNotFoundException();
+        }
+
+        model.addAttribute("order", order);
+
+        List<OrderDetail> orderDetails = orderService.AllOrderDetail(order.getId());
+
+        model.addAttribute("orderproduct", orderDetails);
+
+        return "client/orderdetail";
     }
-    List<Order> orders;
-    if(principal.getName().equals("Admin")){
-        orders= orderService.findALlOrders();
-    }else{
-        orders= orderService.findAll(principal.getName());
-    }
-     
-    Order order=null;
-    
-    for (Order order2 : orders) {
-        if(order2.getId().equals(id)){
-            order=order2;
+
+    @GetMapping("/export")
+    public void exportToExcel(HttpServletResponse response) {
+        try {
+            // Tạo danh sách đối tượng cần xuất ra Excel
+            List<Order> objectList = orderService.findALlOrders();
+
+            // Xuất danh sách đối tượng vào tệp Excel
+            orderService.exportToExcel(objectList, response);
+        } catch (IOException e) {
+            // Xử lý lỗi nếu cần
         }
     }
-    if(order==null){
-        throw new RecordNotFoundException();
-    }
-    
-    model.addAttribute("order", order);
-
-    List<OrderDetail> orderDetails = orderService.AllOrderDetail(order.getId());
-  
-    model.addAttribute("orderproduct", orderDetails);
-
-    return "client/orderdetail";
-  }
-
 }

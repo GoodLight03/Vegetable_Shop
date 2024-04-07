@@ -5,6 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .number {
+            cursor: pointer;
+        }
+
+        .number:hover {
+            cursor: pointer;
+            /* Thêm các kiểu CSS khác cho hover */
+        }
+
+        .number:active {
+            cursor: pointer;
+            /* Thêm các kiểu CSS khác cho khi nhấp chuột */
+        }
+    </style>
 </head>
 
 <body>
@@ -53,9 +68,11 @@
                         <form th:action="@{/search-product}" method="get">
                             <div class="col-xl-3">
                                 <div class="input-group w-100 mx-auto d-flex">
-                                    <input name="keyword" type="search" class="form-control p-3" placeholder="keywords"
-                                        aria-describedby="search-icon-1">
-                                    <button type="submit" id="search-icon-1" class="input-group-text p-3"><i
+
+                                    <input id="key" name="key" type="search" class="form-control p-3"
+                                        placeholder="keywords" aria-describedby="search-icon-1">
+                                    <button type="submit" id="search-icon-1"
+                                        class="input-group-text p-3 btnSearchDanhMuc"><i
                                             class="fa fa-search"></i></button>
                                 </div>
                             </div>
@@ -63,13 +80,13 @@
                         <div class="col-6"></div>
                         <div class="col-xl-3">
                             <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                <label for="fruits">Default Sorting:</label>
-                                <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3"
+                                <label for="fruits">Sorting by :</label>
+                                <select id="my-select" name="fruitlist" class="border-0 form-select-sm bg-light me-3"
                                     form="fruitform">
-                                    <option value="volvo">Nothing</option>
-                                    <option value="saab">Popularity</option>
-                                    <option value="opel">Organic</option>
-                                    <option value="audi">Fantastic</option>
+                                    <option th:value="null">All</option>
+                                    <option th:each="category : ${type}" th:value="${category.id}"
+                                        th:text="${category.name}"></option>
+
                                 </select>
                             </div>
                         </div>
@@ -79,14 +96,22 @@
                             <div class="row g-4">
                                 <div class="col-lg-12">
                                     <div class="mb-3">
-                                        <h4>Categories</h4>
-                                        <ul th:each="users : ${type}" class="list-unstyled fruite-categorie">
+                                        <h4>Sorted By</h4>
+                                        <ul class="list-unstyled fruite-categorie">
                                             <li>
                                                 <div class="d-flex justify-content-between fruite-name">
-                                                    <a th:href="@{/search_probytype(id = ${users.id})}"
-                                                        th:text="${users.name}"><i
-                                                            class="fas fa-apple-alt me-2"></i></a>
-                                                    <span>(3)</span>
+                                                    <button class="btn btn-primary btnTangGia">
+                                                         Price Up &uarr;
+                                                        
+                                                    </button>
+
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="d-flex justify-content-between fruite-name">
+                                                    <button class="btn btn-primary btnGiamGia">
+                                                         Price Down &darr;
+                                                    </button>
                                                 </div>
                                             </li>
 
@@ -96,8 +121,14 @@
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <h4 class="mb-2">Price</h4>
+                                        <label for="minInput">Enter the minimum price:</label>
+                                        <input min="0" type="number" id="minInput" name="minInput">
+
+                                        <label for="maxInput">Enter the highest price</label>
+                                        <input min=0 type="number" id="maxInput" name="maxInput">
+
                                         <input type="range" class="form-range w-100" id="rangeInput" name="rangeInput"
-                                            min="0" max="500" value="0" oninput="amount.value=rangeInput.value">
+                                            min="0" max="500" value="0">
                                         <output id="amount" name="amount" min-velue="0" max-value="500"
                                             for="rangeInput">0</output>
                                     </div>
@@ -265,7 +296,7 @@
 
                                 <!-- <div class="col-12">
                                     <div class="pagination d-flex justify-content-center mt-5 pagination"> -->
-                                        <!-- <p>
+                                <!-- <p>
                                             <a th:if="${currentPage != 0}"
                                                 th:href="@{'/shop?pageNo=' + ${currentPage - 1}}"
                                                 class="rounded">&laquo;</a>
@@ -283,7 +314,7 @@
                                                 th:href="@{'/shop?pageNo=' + ${currentPage + 1}}"
                                                 class="rounded">&raquo;</a>
                                         </p> -->
-                                    <!-- </div>
+                                <!-- </div>
                                 </div> -->
                             </div>
                         </div>
@@ -297,7 +328,30 @@
     <div th:replace="fragment/fragment::footer"></div>
     <div th:replace="fragment/fragment::script"></div>
     <script>
+        // function updateOutput() {
+        //     var rangeValue = document.getElementById("rangeInput").value;
+        //     document.getElementById("amount").value = rangeValue;
+
+        //     // Gửi giá trị min, max và giá trị thay đổi lên server
+        //     //sendToServer(min, max, rangeValue);
+        // }
+
+        // function updateRange() {
+        //     var minInput = document.getElementById("minInput").value;
+        //     var maxInput = document.getElementById("maxInput").value;
+        //     var rangeInput = document.getElementById("rangeInput");
+
+        //     // Kiểm tra giá trị min và max hợp lệ
+        //     if (minInput <= maxInput) {
+        //         rangeInput.min = minInput;
+        //         rangeInput.max = maxInput;
+        //     }
+        // }
+
         $(document).ready(function () {
+            var check = '';
+            var key = '';
+            var price = 0;
 
             ajaxGet(1);
 
@@ -316,20 +370,20 @@
                                 '<div class="text-white bg-secondary px-3 py-1 rounded position-absolute "' +
                                 ' style="top: 10px; left: 10px;" text="' + danhMuc.type.name + '"><p class="Type"></p></div>' +
                                 '<div class="p-4 border border-secondary border-top-0 rounded-bottom">' +
-                                '<h4 th:text="' + danhMuc.name + '"></h4>' +
-                                '<div style="height: 200px">' +
-                                '<p th:text="' + danhMuc.description + '"></p>' +
+                                '<h4 style="height:80px;">' + danhMuc.name + '</h4>' +
+                                '<div style="height: 250px">' +
+                                '<p >' + danhMuc.description + '</p>' +
                                 '<p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do' +
                                 'eiusmod te incididunt</p>' +
+                                ' <p style="display: block;" class="text-dark fs-5 fw-bold mb-0">' + danhMuc.price + '/kg</p>' +
                                 '<a href="/detail?id=' + danhMuc.id + '">Show More...</a>' +
                                 ' </div>' +
                                 '<div class="d-flex justify-content-between flex-lg-wrap">' +
-                                ' <p class="text-dark fs-5 fw-bold mb-0"' +
-                                ' th:text="' + '$' + danhMuc.price + '/kg"></p>' +
+
                                 ' <input type="hidden" value=' + danhMuc.id + ' name="id"' +
                                 '  class="form-control">' +
-                                '  <button type="submit"' +
-                                'class="btn border border-secondary rounded-pill px-3 text-primary"><i' +
+                                '  <button type="submit" style="display: block;"' +
+                                'class="btn border border-secondary rounded-pill px-3 text-primary btnAddToCart"><i' +
                                 ' class="fa fa-shopping-bag me-2 text-primary"></i> Add to' +
                                 'cart</button>' +
                                 ' </div>' +
@@ -355,7 +409,7 @@
                             for (var numberPage = 1; numberPage <= result.totalPages; numberPage++) {
                                 // var li = '<li class="page-item "><a class="pageNumber">' + numberPage + '</a></li>';
                                 // <p th:each="i : ${#numbers.sequence(1, totalPages)}">
-                                var li = '<p><a class="rounded pageNumber">' +
+                                var li = '<p style="cursor: pointer;"><a class="rounded pageNumber">' +
                                     '<span class="number" text="' + numberPage + '">' +
                                     ' </span>' +
                                     '</a></p>';
@@ -384,13 +438,269 @@
                 });
             };
 
+            $("#minInput, #maxInput").on("change", function () {
+                updateRange();
+            });
+
+            $("#rangeInput").on("input", function () {
+                updateOutput();
+            });
+
+            function updateOutput() {
+                var rangeValue = $("#rangeInput").val();
+                price = rangeValue;
+                key = '';
+                check='';
+                console.log(price);
+                $("#amount").val(rangeValue);
+                var url = "http://localhost:8888/api/product/minmax/1?min="
+                if ($("#minInput").val() == '') {
+                    url += "0&max=" + $("#rangeInput").val();
+                } else {
+                    url += $("#minInput").val() + "&max=" + $("#rangeInput").val();
+                }
+
+                console.log(url);
+                sendSelectedOption(url, 1);
+            }
+
+            function resetMinMax(){
+                $("#minInput").val(0);
+                $("#maxInput").val(0);
+                $("#rangeInput").val(0);
+                price = 0;
+            }
+
+            function updateRange() {
+                var minInput = $("#minInput").val();
+                var maxInput = $("#maxInput").val();
+                var rangeInput = $("#rangeInput");
+                price = rangeInput.val();
+                console.log(minInput);
+                console.log(maxInput);
+
+                // Kiểm tra giá trị min và max hợp lệ
+                if (minInput <= maxInput) {
+                    rangeInput.attr("min", minInput);
+                    rangeInput.attr("max", maxInput);
+                    
+                }
+            }
+
+            $(document).on("click", ".btnSearchDanhMuc", function () {
+                resetMinMax();
+                event.preventDefault();
+                $('.tblType tbody').empty();
+                var url = "http://localhost:8888/api/product/page/1?key=" + $('#key').val();
+                key = $('#key').val();
+                console.log(key);
+                sendSelectedOption(url, 1);
+
+            });
+
             $(document).on('click', '.number', function (event) {
                 event.preventDefault();
                 var page = $(this).text();
                 $('.tblType div').remove();
                 $('.pagination p').remove();
-                ajaxGet(page);
+
+                var selectedOption = $('#my-select').val();
+                console.log(selectedOption);
+                var url = "http://localhost:8888/api/product/page/" + page;
+                if (price > 0) {
+                    urlk = "http://localhost:8888/api/product/minmax/"+page+"?min="
+                    if ($("#minInput").val() == '') {
+                        urlk += "0&max=" + $("#rangeInput").val();
+                    } else {
+                        urlk += $("#minInput").val() + "&max=" + price;
+                    }
+                    sendSelectedOption(urlk, page);
+                }
+
+                if (key == '') {
+                    if (selectedOption !== '') {
+                        url += '?id=' + selectedOption;
+                        if (check != '') {
+                            url += '&sort=' + check;
+                        }
+                    }
+                    else {
+                        if (check != '') {
+                            url += '?sort=' + check;
+                        }
+
+                    }
+                    console.log(url);
+
+                    sendSelectedOption(url, page);
+                } else {
+                    url += '?key=' + key;
+                    console.log(url);
+                    sendSelectedOption(url, page);
+                }
+
+
+                //ajaxGet(page);
             });
+
+            $(document).on("click", ".btnAddToCart", function () {
+
+                var danhMucId = $(this).parent().find('input').val();
+                var workingObject = $(this);
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8888/api/cart/add-to-cart?id=" + danhMucId,
+                    success: function (resultMsg) {
+                        //  resetDataForDelete();
+                        window.location.reload();
+                        alert("Thêm giỏ hàng thành công");
+                    },
+                    error: function (e) {
+                        alert("Không thể thêm giỏ hàng ! Hãy kiểm tra lại");
+                        console.log("ERROR: ", e);
+                    }
+                });
+            });
+
+            $('#my-select').on('change', function () {
+                var selectedOption = $(this).val();
+               resetMinMax();
+                check = '';
+                key = '';
+                $('#key').val('');
+                console.log(check);
+                console.log(selectedOption);
+                var url = "http://localhost:8888/api/product/page/1";
+                if (selectedOption !== '') {
+                    url += '?id=' + selectedOption;
+                }
+                sendSelectedOption(url, 1);
+
+            });
+
+            $(document).on("click", ".btnTangGia", function () {
+                event.preventDefault();
+                var selectedOption = $('#my-select').val();
+                check = 'asc';
+                $('#key').val('');
+                key = '';
+                resetMinMax();
+                console.log(check);
+                console.log(selectedOption);
+
+                var url = "http://localhost:8888/api/product/page/1?sort=" + check;
+                if (selectedOption !== '') {
+                    url += '&id=' + selectedOption;
+                }
+                console.log(url);
+                sendSelectedOption(url, 1);
+
+            });
+
+            $(document).on("click", ".btnGiamGia", function () {
+                event.preventDefault();
+                var selectedOption = $('#my-select').val();
+                check = 'desc';
+                $('#key').val('');
+                key = '';
+                resetMinMax();
+                console.log(check);
+                console.log(selectedOption);
+                var url = "http://localhost:8888/api/product/page/1?sort=" + check;
+                if (selectedOption !== '') {
+                    url += '&id=' + selectedOption;
+                }
+                console.log(url);
+                sendSelectedOption(url, 1);
+            });
+
+            function sendSelectedOption(url, page) {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    //data: { id: option },
+                    success: function (result) {
+                        $('.tblType').empty();
+                        $.each(result.content, function (i, danhMuc) {
+
+                            var danhMucRow = '<div class="col-md-6 col-lg-6 col-xl-4 trr"><form >' +
+                                '<div class="rounded position-relative fruite-item">' +
+                                '<div class="fruite-img">' +
+                                '<img style="height: 250px" class="img-fluid w-100 rounded-top my-product-image" alt="">' +
+                                ' </div>' +
+                                '<div class="text-white bg-secondary px-3 py-1 rounded position-absolute "' +
+                                ' style="top: 10px; left: 10px;" text="' + danhMuc.type.name + '"><p class="Type"></p></div>' +
+                                '<div class="p-4 border border-secondary border-top-0 rounded-bottom">' +
+                                '<h4 style="height:80px;">' + danhMuc.name + '</h4>' +
+                                '<div style="height: 250px">' +
+                                '<p >' + danhMuc.description + '</p>' +
+                                '<p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do' +
+                                'eiusmod te incididunt</p>' +
+                                ' <p style="display: block;" class="text-dark fs-5 fw-bold mb-0">' + danhMuc.price + '/kg</p>' +
+                                '<a href="/detail?id=' + danhMuc.id + '">Show More...</a>' +
+                                ' </div>' +
+                                '<div class="d-flex justify-content-between flex-lg-wrap">' +
+
+                                ' <input type="hidden" value=' + danhMuc.id + ' name="id"' +
+                                '  class="form-control">' +
+                                '  <button type="submit" style="display: block;"' +
+                                'class="btn border border-secondary rounded-pill px-3 text-primary btnAddToCart"><i' +
+                                ' class="fa fa-shopping-bag me-2 text-primary"></i> Add to' +
+                                'cart</button>' +
+                                ' </div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</form></div>';
+
+                            var $danhMucRow = $(danhMucRow); // Tạo một đối tượng jQuery từ chuỗi HTML
+
+                            var dataURI = 'data:image/jpeg;base64,' + danhMuc.image; // Đường dẫn base64 của ảnh
+
+                            $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
+
+                            $danhMucRow.find('.Type').text(danhMuc.type.name);
+
+                            $('.tblType').append($danhMucRow);
+                            // $('.tblType tbody').append(danhMucRow);
+                        });
+
+                        $('.tblType').append('<div class="col-12"><div class="pagination d-flex justify-content-center mt-5 pagination"></div></div>');
+
+                        if (result.totalPages > 1) {
+                            for (var numberPage = 1; numberPage <= result.totalPages; numberPage++) {
+                                // var li = '<li class="page-item "><a class="pageNumber">' + numberPage + '</a></li>';
+                                // <p th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                var li = '<p style="cursor: pointer;"><a class="rounded pageNumber">' +
+                                    '<span class="number" text="' + numberPage + '">' +
+                                    ' </span>' +
+                                    '</a></p>';
+                                // </p>
+
+                                var $li = $(li);
+                                $li.find('.number').text(numberPage);
+
+                                $('.pagination').append($li);
+                            };
+
+
+                            // active page pagination
+                            $(".number").each(function (index) {
+                                if ($(this).text() == (parseInt(page, 10))) {
+                                    $(this).parent().removeClass().addClass("rounded pageNumber active");
+                                }
+                            });
+                        };
+
+                    },
+
+
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.log(error);
+                    }
+                });
+            }
 
         })
     </script>

@@ -2,8 +2,10 @@ package com.shop.vegetable.api;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,50 @@ public class ProductApi {
         return ResponseEntity.ok(productService.findAll());
     }
 
+    @GetMapping("/allAdmin")
+    public ResponseEntity<List<Product>> findAllTypeAD() {
+        return ResponseEntity.ok(productService.findAllAdmin());
+    }
+
+    @GetMapping("/typeAdmin")
+    public ResponseEntity<?> findAllTypeliAD(@RequestParam(value = "id", required = false) Long id) {
+        if (id == null) {
+            List<Product> allProducts = productService.findAllAdmin();
+            return ResponseEntity.ok(allProducts);
+        } else {
+            List<Product> productsByType = productService.findByTypeAdmin(id);
+            return ResponseEntity.ok(productsByType);
+        }
+    }
+    
+    @GetMapping("/Disable/{id}")
+    public ResponseEntity<Product> findAllTypeAAD(@PathVariable("id") Long id) {
+        Product product=productService.getByIdNotDto(id);
+        if(product.getStatus().equals("Enable")){
+            product.setStatus("Disable");
+            return ResponseEntity.ok(productService.updateEnable(product));
+        }else{
+            product.setStatus("Enable");
+            return ResponseEntity.ok(productService.updateEnable(product));
+        }
+        
+    }
+
+
+    @GetMapping("/all/asc")
+    public ResponseEntity<List<Product>> findAllTypeasc() {
+        return ResponseEntity.ok(productService.findAllAdmin().stream()
+                .sorted(Comparator.comparingDouble(Product::getPrice))
+                .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/all/desc")
+    public ResponseEntity<List<Product>> findAllTypedesc() {
+        return ResponseEntity.ok(productService.findAllAdmin().stream()
+                .sorted(Comparator.comparingDouble(Product::getPrice).reversed())
+                .collect(Collectors.toList()));
+    }
+
     @GetMapping("/all/{id}")
     public ResponseEntity<Product> findTypeById(@PathVariable long id) {
         Optional<Product> m = productService.findById(id);
@@ -53,13 +99,111 @@ public class ProductApi {
 
     }
 
-    @GetMapping("/page/{page}")
-    public ResponseEntity<Page<ProductDto>> findTypeByPage(@PathVariable int page) {
-        Page<ProductDto> products = productService.getAllProducts(page);
+    @GetMapping("/type")
+    public ResponseEntity<?> findAllTypeli(@RequestParam(value = "id", required = false) Long id) {
+        if (id == null) {
+            List<Product> allProducts = productService.findAll();
+            return ResponseEntity.ok(allProducts);
+        } else {
+            List<Product> productsByType = productService.findByType(id);
+            return ResponseEntity.ok(productsByType);
+        }
+    }
 
-        return ResponseEntity.ok(products);
+    @GetMapping("/find/{key}")
+    public ResponseEntity<?> findAllTypei(@PathVariable String key) {
+        List<Product> lt = productService.findName(key);
+        return ResponseEntity.ok(lt);
+    }
+
+    @GetMapping("/page/{page}")
+    public ResponseEntity<Page<ProductDto>> findTypeByPage(@PathVariable int page,
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "key", required = false) String key) {
+        if (key != null) {
+            List<ProductDto> productsByType = productService.allProduct().stream()
+                    .filter(product -> product.getName().contains(key)
+                            || product.getDescription().contains(key)
+                            || String.valueOf(product.getPrice()).contains(key))
+                    .collect(Collectors.toList());
+
+            Page<ProductDto> products = productService.getAllProductsPage(page, productsByType);
+
+            return ResponseEntity.ok(products);
+        }
+        if (sort != null) {
+
+            if (sort.equals("asc")) {
+                if (id == null) {
+
+                    // Page<ProductDto> products = productService.getAllProducts(page);
+                    // return ResponseEntity.ok(products);
+                    List<ProductDto> productsByType = productService.allProduct().stream()
+                            .sorted(Comparator.comparingDouble(ProductDto::getPrice))
+                            .collect(Collectors.toList());
+
+                    Page<ProductDto> products = productService.getAllProductsPage(page, productsByType);
+
+                    return ResponseEntity.ok(products);
+                } else {
+                    List<ProductDto> productsByTypeH = productService.findByTypeDto(id).stream()
+                            .sorted(Comparator.comparingDouble(ProductDto::getPrice))
+                            .collect(Collectors.toList());
+
+                    Page<ProductDto> products = productService.getAllProductsPage(page, productsByTypeH);
+                    return ResponseEntity.ok(products);
+                }
+            }
+
+            else if (sort.equals("desc")) {
+                if (id == null) {
+
+                    // Page<ProductDto> products = productService.getAllProducts(page);
+                    // return ResponseEntity.ok(products);
+                    List<ProductDto> productsByType = productService.allProduct().stream()
+                            .sorted(Comparator.comparingDouble(ProductDto::getPrice).reversed())
+                            .collect(Collectors.toList());
+
+                    Page<ProductDto> products = productService.getAllProductsPage(page, productsByType);
+
+                    return ResponseEntity.ok(products);
+                } else {
+                    List<ProductDto> productsByType = productService.findByTypeDto(id).stream()
+                            .sorted(Comparator.comparingDouble(ProductDto::getPrice).reversed())
+                            .collect(Collectors.toList());
+
+                    Page<ProductDto> products = productService.getAllProductsPage(page, productsByType);
+                    return ResponseEntity.ok(products);
+                }
+            }
+
+        }
+
+        if (id == null) {
+            Page<ProductDto> products = productService.getAllProducts(page);
+            return ResponseEntity.ok(products);
+        } else {
+            List<ProductDto> productsByType = productService.findByTypeDto(id);
+            Page<ProductDto> products = productService.getAllProductsPage(page, productsByType);
+            return ResponseEntity.ok(products);
+        }
 
     }
+
+    @GetMapping("/minmax/{page}")
+    public ResponseEntity<Page<ProductDto>> findTypeByMinMax(@PathVariable int page,
+            @RequestParam(value = "min", required = true) float min,
+            @RequestParam(value = "max", required = true) float max) {
+            List<ProductDto> productsByType = productService.allProduct().stream()
+            .filter(product -> product.getPrice() <= max
+                            && product.getPrice() >=min)
+                    .collect(Collectors.toList());
+
+            Page<ProductDto> products = productService.getAllProductsPage(page, productsByType);
+            return ResponseEntity.ok(products);
+        }
+
 
     @PostMapping("/save")
     public ResponseEntity<Product> addType(@ModelAttribute ProductDto productDto) {

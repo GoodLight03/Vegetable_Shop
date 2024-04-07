@@ -1,4 +1,4 @@
-package com.shop.vegetable.config;
+package com.shop.vegetable.config.vppay;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;

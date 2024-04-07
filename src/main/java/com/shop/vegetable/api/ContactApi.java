@@ -27,6 +27,7 @@ import com.shop.vegetable.service.ContactService;
 import com.shop.vegetable.service.TypeService;
 import com.shop.vegetable.utils.EmailUlti;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 @RestController
@@ -39,11 +40,13 @@ public class ContactApi {
 	private EmailUlti emailUlti;
 
     @GetMapping("/all")
+    //@Operation(summary = "Get a book by id")
     public ResponseEntity<?> findAllType() {
         return ResponseEntity.ok(contactService.findAll());
     }
 
     @GetMapping("/all/{id}")
+    //@Operation(summary = "Get a book by id")
     public ResponseEntity<Contact> findTypeById(@PathVariable long id) {
         Optional<Contact> m = contactService.findById(id);
         if (m.isPresent()) {
@@ -56,6 +59,7 @@ public class ContactApi {
     }
 
     @PostMapping("/save")
+    //@Operation(summary = "Get a book by id")
     public ResponseEntity<Contact> addType(@RequestBody Contact contact) {
         Contact mcd = contactService.save(contact);
         try {
@@ -67,6 +71,7 @@ public class ContactApi {
     }
 
     @PatchMapping("/all/{id}")
+    //  @Operation(summary = "Get a book by id")
     public ResponseEntity<Void> updateType(@RequestParam("reply")String reply, @PathVariable long id) {
         try {
             contactService.update(reply,new Date(),id);

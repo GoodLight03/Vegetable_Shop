@@ -30,6 +30,7 @@ import com.shop.vegetable.dto.TypeDto;
 import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.service.TypeService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -41,6 +42,7 @@ public class TypeApi {
     private TypeService typeService;
 
     @GetMapping("/all")
+    @Operation(summary = "Get All Type")
     public ResponseEntity<?> findAllType() {
         List<Type> lt = typeService.findAll();
         return ResponseEntity.ok(lt);

@@ -36,7 +36,7 @@ public class Product {
     private String name;
     private String description;
     private float price;
-
+    private String status="Enable";
     @Lob
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;

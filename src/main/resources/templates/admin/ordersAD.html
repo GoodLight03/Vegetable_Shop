@@ -33,8 +33,13 @@
                                 <i class="fas fa-search fa-sm"></i>
                             </button>
                         </div>
+
                     </div>
                 </form>
+
+                <a href="/export"><i class="fas fa fa-solid fa-print" style="float: right; margin-right: 100px;">Print
+                        Report</i></a>
+
                 <div class="row">
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-primary shadow h-100 py-2">
@@ -118,7 +123,42 @@
                     </div>
                 </div>
 
+                <!-- <div class="col-md-9 animated bounce">
+                    <h3 class="page-header">Thống kê</h3>
 
+                    <canvas id="myChart" width="600px" height="400px"></canvas>
+
+                    <h4 style="text-align: center; padding-right: 10%">Biểu đồ tổng giá trị đơn hàng hoàn thành theo
+                        tháng</h4>
+
+                </div> -->
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Statistical</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="myBarChart"></canvas>
+                        </div>
+                        <hr>
+                        Revenue by month and year
+
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Statistical</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="myAreaChart"></canvas>
+                        </div>
+                        <hr>
+                        Revenue by month and year
+                    </div>
+                </div>
 
 
 
@@ -136,17 +176,18 @@
                 <table class="table table-striped tblType" th:if="${size > 0}">
                     <thead>
                         <tr>
-                            <th scope="col"> Index</th>
+                            <th scope="col">Index</th>
+                            <th scope="col">Customer</th>
                             <th scope="col">Order Date</th>
                             <th scope="col">Order Status</th>
-                            <th scope="col">Quantity</th>
+                            <th scope="col">Address</th>
                             <th scope="col">Total Price</th>
                             <th scope="col">Payment Method</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        
+
                     </tbody>
                 </table>
 
@@ -158,7 +199,59 @@
 
             </div>
             <!-- End of Content Wrapper -->
+            <div class="row col-md-10">
+                <form class="chiTietForm">
+                    <div class="modal fade" id="chiTietModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog " role="document" style="width: 60%">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="title" style="text-align: center; font-weight: bolder;">Chi tiết sản phẩm
+                                    </h3>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card">
+                                        <div class="container-fliud">
+                                            <div class="wrapper row">
+                                                <div class="preview col-md-6">
 
+                                                    <div class="preview-pic tab-content">
+                                                        <div class="tab-pane active" id="pic-1">
+                                                            <img style="width: 350px; height: 350px" class="hinhAnh" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="details col-md-6" style="font-size: 16px">
+                                                    <p class="orderDate"></p>
+                                                    <p class="orderStatus"></p>
+                                                    <p class="hangSangXuat"></p>
+                                                    <p class="tax"></p>
+                                                    <p class="totalPrice"></p>
+                                                    <p class="paymentMethod"></p>
+                                                    <p class="heDieuHanh"></p>
+                                                    <p class="manHinh"></p>
+                                                    <p class="dungLuongPin"></p>
+                                                    <p class="thongTinChung"></p>
+                                                    <p class="baoHanh"></p>
+                                                    <p class="donGia"></p>
+                                                    <p class="donViKho"></p>
+                                                    <p class="donViBan"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <!-- End of Page Wrapper -->
@@ -168,6 +261,7 @@
     <!-- End -->
     <!-- Bootstrap core JavaScript-->
     <div th:replace="~{fragment/fragments::script}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script th:src="@{/js/categories.js}"></script>
     <script>
@@ -184,17 +278,18 @@
                             // var clas='my-product-image' + danhMuc.id;
                             var danhMucRow = '<tr>' +
                                 '<td >' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.users.username + '</td>' +
                                 '<td>' + danhMuc.orderDate + '</td>' +
                                 '<td>' + danhMuc.orderStatus + '</td>' +
-                                '<td>' + danhMuc.quantity + '</td>' +
+                                '<td>' + danhMuc.users.address + '</td>' +
                                 '<td><p style="color: red">$' + danhMuc.totalPrice + '</p></td>' +
                                 '<td>' + danhMuc.paymentMethod + '</td>' +
-                                '<td>' + '<a href="/order-detail?id='+ danhMuc.id +'" class="button-cancel">Detail</a>' + '</td>' +
+                                '<td>' + '<a href="/order-detail?id=' + danhMuc.id + '" class="button-cancel">Detail</a>' + '</td>' +
                                 // '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
                                 // + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
                                 // '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
-                            '</tr>';
-                           
+                                '</tr>';
+
 
                             // $('.tblType tbody').append(danhMucRow);
                             $('.tblType tbody').append(danhMucRow);
@@ -209,6 +304,276 @@
                 });
             };
         });
+
+        window.onload = function () {
+            // Bar Chart Example
+            var ctx = document.getElementById("myBarChart");
+
+            var data = [];
+            var label = [];
+            var dataForDataSets = [];
+
+
+            $.ajax({
+                async: false,
+                type: "GET",
+                data: data,
+                contentType: "application/json",
+                url: "http://localhost:8888/api/order/report",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        label.push(data[i][0] + "/" + data[i][1]);
+                        dataForDataSets.push(data[i][2]);
+                    }
+                },
+                error: function (e) {
+                    alert("Error: ", e);
+                    console.log("Error", e);
+                }
+            });
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: "Revenue",
+                        backgroundColor: "#4e73df",
+                        hoverBackgroundColor: "#2e59d9",
+                        borderColor: "#4e73df",
+                        data: dataForDataSets,
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'month'
+                            },
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 6
+                            },
+                            maxBarThickness: 25,
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: 15000,
+                                maxTicksLimit: 5,
+                                padding: 10,
+                                // Include a dollar sign in the ticks
+                                callback: function (value, index, values) {
+                                    return '$' + number_format(value);
+                                }
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem, chart) {
+                                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            }
+                        }
+                    },
+                }
+            });
+
+
+
+            // Area Chart Example
+            var ctx = document.getElementById("myAreaChart");
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: "Earnings",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(78, 115, 223, 0.05)",
+                        borderColor: "rgba(78, 115, 223, 1)",
+                        pointRadius: 3,
+                        pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                        pointBorderColor: "rgba(78, 115, 223, 1)",
+                        pointHoverRadius: 3,
+                        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2,
+                        data: dataForDataSets,
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'date'
+                            },
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 7
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                maxTicksLimit: 5,
+                                padding: 10,
+                                // Include a dollar sign in the ticks
+                                callback: function (value, index, values) {
+                                    return '$' + number_format(value);
+                                }
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        intersect: false,
+                        mode: 'index',
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem, chart) {
+                                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            }
+                        }
+                    }
+                }
+            });
+
+
+
+            //Ole
+            // var data = [];
+            // var label = [];
+            // var dataForDataSets = [];
+
+            // $.ajax({
+            //     async: false,
+            //     type: "GET",
+            //     data: data,
+            //     contentType: "application/json",
+            //     url: "http://localhost:8888/api/order/report",
+            //     success: function (data) {
+            //         for (var i = 0; i < data.length; i++) {
+            //             label.push(data[i][0] + "/" + data[i][1]);
+            //             dataForDataSets.push(data[i][2] / 1000000);
+            //         }
+            //     },
+            //     error: function (e) {
+            //         alert("Error: ", e);
+            //         console.log("Error", e);
+            //     }
+            // });
+
+            // var canvas = document.getElementById('myChart');
+
+
+            // data = {
+            //     labels: label,
+            //     datasets: [{
+            //         label: "Tổng giá trị ( Triệu đồng)",
+            //         backgroundColor: "#0000ff",
+            //         borderColor: "#0000ff",
+            //         borderWidth: 2,
+            //         hoverBackgroundColor: "#0043ff",
+            //         hoverBorderColor: "#0043ff",
+            //         data: dataForDataSets,
+            //     }]
+            // };
+            // var option = {
+            //     scales: {
+            //         yAxes: [{
+            //             stacked: true,
+            //             gridLines: {
+            //                 display: true,
+            //                 color: "rgba(255,99,132,0.2)"
+            //             }
+            //         }],
+            //         xAxes: [{
+            //             barPercentage: 0.5,
+            //             gridLines: {
+            //                 display: false
+            //             }
+            //         }]
+            //     },
+            //     maintainAspectRatio: false,
+            //     legend: {
+            //         labels: {
+            //             // This more specific font property overrides the global property
+            //             fontSize: 20
+            //         }
+            //     }
+            // };
+
+            // var myBarChart = Chart.Bar(canvas, {
+            //     data: data,
+            //     options: option
+            // });
+        }
     </script>
 </body>
 

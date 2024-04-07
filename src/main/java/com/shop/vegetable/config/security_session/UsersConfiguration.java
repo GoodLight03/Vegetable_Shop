@@ -1,4 +1,4 @@
-package com.shop.vegetable.config;
+package com.shop.vegetable.config.security_session;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -84,6 +85,11 @@ public class UsersConfiguration {
                         .sessionManagement(
                                         session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
                 return http.build();
+        }
+
+        public UserDetails loadUserByUsername(String username) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
         }
 
 }

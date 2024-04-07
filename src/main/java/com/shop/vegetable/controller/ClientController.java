@@ -133,7 +133,7 @@ public class ClientController {
   
 
   @GetMapping("/shop")
-  public String sh(int pageNo, Model model, Principal principal, Authentication authentication) {
+  public String sh( Model model, Principal principal, Authentication authentication) {
     if (principal != null) {
       model.addAttribute("namelogin", principal.getName());
       Users users = userService.findByUsername(principal.getName());
@@ -151,10 +151,10 @@ public class ClientController {
 
     // List<Product> products = prd.findAll();
     // List<ProductDto> products = prd.allProduct();
-    Page<ProductDto> products = productService.getAllProducts(pageNo);
-    model.addAttribute("currentPage", pageNo);
-    model.addAttribute("totalPages", products.getTotalPages());
-    model.addAttribute("product", products);
+    //Page<ProductDto> products = productService.getAllProducts(pageNo);
+    // model.addAttribute("currentPage", pageNo);
+    // model.addAttribute("totalPages", products.getTotalPages());
+    // model.addAttribute("product", products);
     model.addAttribute("currentPages", "shop");
     return "client/shop";
   }

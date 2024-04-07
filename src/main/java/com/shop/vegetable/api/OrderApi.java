@@ -90,4 +90,9 @@ public class OrderApi {
         }
     }
 
+    @GetMapping("/report")
+	public ResponseEntity<List<Object>> test() {
+		return ResponseEntity.ok(orderService.getOrderByMonthvsYear());
+	}
+
 }

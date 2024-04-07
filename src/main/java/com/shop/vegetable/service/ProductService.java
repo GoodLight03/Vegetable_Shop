@@ -22,6 +22,8 @@ public interface ProductService {
 
     Product update(MultipartFile imageProduct, ProductDto productDto);
 
+    Product updateEnable( Product product);
+
     ProductDto getById(Long id);
 
     Product getByIdNotDto(Long id);
@@ -31,4 +33,14 @@ public interface ProductService {
     Page<ProductDto> getAllProducts(int pageNo);
 
     List<ProductDto> allProduct();
+
+    List<Product> findByType(Long id);
+
+    List<ProductDto> findByTypeDto(Long id);
+
+    Page<ProductDto> getAllProductsPage(int pageNo,List<ProductDto> productDtoLists);
+
+    List<Product> findByTypeAdmin(Long id);
+
+    List<Product> findAllAdmin();
 }

@@ -47,7 +47,7 @@
     <div class="container-fluid py-5">
         <div class="container py-5">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table tblType">
                     <thead>
                         <tr>
                             <th scope="col">Products</th>
@@ -67,13 +67,14 @@
                                 </div>
                             </th>
                             <td>
-                                <p class="mb-0 mt-4" th:text="${cartItem.product.name}"></p>
+                                <a th:href="@{/detail(id = ${cartItem.product.id})}"><p class="mb-0 mt-4" th:text="${cartItem.product.name}"></p></a>
                             </td>
                             <td>
                                 <p class="mb-0 mt-4" th:text="'$' + ${cartItem.product.price}"></p>
                             </td>
                             <td style="width: 150px;">
                                 <form th:action="@{/update-cart}" method="post">
+                               
                                     <input type="hidden" name="id" th:value="${cartItem.product.id}">
                                     <div class="input-group quantity mt-4" style="width: 150px;">
                                         <div class="input-group-btn">
@@ -98,13 +99,15 @@
                                 <p th:text="'$' + ${cartItem.unitPrice * cartItem.quantity}" class="mb-0 mt-4"></p>
                             </td>
                             <td>
+
+
                                 <button type="submit" name="action" value="update"
                                     class="btn btn-md rounded-circle bg-light border mt-4">
-                                    <i class="fa fa-check text-success"></i>
+                                    <i class="fa fa-check text-success "></i>
                                 </button>
                                 <button type="submit" name="action" value="delete"
                                     class="btn btn-md rounded-circle bg-light border mt-4">
-                                    <i class="fa fa-times text-danger"></i>
+                                    <i class="fa fa-times text-danger "></i>
                                 </button>
                                 </form>
                             </td>
@@ -153,6 +156,159 @@
 
     <div th:replace="fragment/fragment::footer"></div>
     <div th:replace="fragment/fragment::script"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            //ajaxGet();
+
+            function ajaxGet() {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/cart/all",
+                    success: function (result) {
+                        console.log(result);
+                        $.each(result.cartItems, function (i, danhMuc) {
+
+                            var danhMucRow = '<tr>' +
+                                '<th scope="row">' +
+                                '<div class="d-flex align-items-center">' +
+                                '<img class="img-fluid me-5 rounded-circle my-product-image" style="width: 80px; height: 80px;" alt="">' +
+                                '</div>' +
+                                '  </th>' +
+                                ' <td>' +
+                                '<p class="mb-0 mt-4">' + danhMuc.product.name + '</p>' +
+                                '</td>' +
+                                '<td>' +
+                                ' <p class="mb-0 mt-4">$' + danhMuc.product.price + '</p>' +
+                                '  </td>' +
+                                '<td style="width: 150px;">' +
+                                '<form>' +
+                                '<input type="hidden" name="id" value=' + danhMuc.product.id + '>' +
+                                ' <div class="input-group quantity mt-4" style="width: 150px;">' +
+                                '<div class="input-group-btn">' +
+                                ' <button type="button" class="btn btn-sm btn-minus rounded-circle bg-light border "><i class="fa fa-minus"></i></button>' +
+                                '  </div>' +
+                                ' <input style="width: 50px;" type="number" name="quantity"' +
+                                ' value=' + danhMuc.quantity + ' size="4" min="0" step="1"' +
+                                ' class="form-control form-control-sm text-center border-0 ">' +
+                                '<div class="input-group-btn">' +
+                                '<button type="button" class="btn btn-sm btn-plus rounded-circle bg-light border "><i class="fa fa-plus"></i></button>' +
+                                ' </div>' +
+                                '  </div>' +
+                                '</td>' +
+                                ' <td>' +
+                                '<p class="mb-0 mt-4">$' + danhMuc.unitPrice * danhMuc.quantity + '</p>' +
+                                '</td>' +
+                                '<td>' +
+                                ' <input type="hidden" class="idd" name="id" value=' + danhMuc.product.id + '>' +
+                                '     <input type="hidden" style="width: 50px;" type="number" name="quantity"' +
+                                '   value=' + danhMuc.quantity + ' size="4" min="0" step="1"' +
+                                '   class="form-control form-control-sm text-center border-0 quantityy">' +
+                                '<button type="submit" name="action" value="update"' +
+                                '  class="btn btn-md rounded-circle bg-light border mt-4 updateCart">' +
+                                '  <i class="fa fa-check text-success "></i>' +
+                                '</button>' +
+                                '   <button type="submit" name="action" value="delete"' +
+                                'class="btn btn-md rounded-circle bg-light border mt-4  deleteCart">' +
+                                '   <i class="fa fa-times text-danger"></i>' +
+                                ' </button>' +
+                                '   </form>' +
+                                '  </td>' +
+                                '</tr>';
+
+                            var $danhMucRow = $(danhMucRow); // Tạo một đối tượng jQuery từ chuỗi HTML
+
+                            var dataURI = 'data:image/jpeg;base64,' + danhMuc.product.image; // Đường dẫn base64 của ảnh
+
+                            $danhMucRow.find('.my-product-image').attr('src', dataURI); // Đặt dữ liệu base64 vào thuộc tính src của phần tử <img>
+
+                            // $danhMucRow.find('.quantity').attr('value', danhMuc.quantity);
+
+                            $('.tblType tbody').append($danhMucRow);
+                            // $('.tblType tbody').append(danhMucRow);
+                        });
+
+
+                    },
+                    error: function (e) {
+                        alert("Error: ", e);
+                        console.log("Error", e);
+                    }
+
+
+                });
+            };
+
+            $(document).on("click", ".deleteCart", function () {
+
+                var Id = $(this).parent().find('input.idd').val();
+                //var Quantity = $(this).parent().find('input .quantityy').val();
+
+                console.log(Id);
+                var workingObject = $(this);
+
+                $.ajax({
+                    type: "DELETE",
+                    url: "http://localhost:8888/api/cart/delete?id=" + Id,
+                    success: function (resultMsg) {
+                        //  resetDataForDelete();
+                        window.location.reload();
+                        alert("Xóa mặt hàng thành công");
+                    },
+                    error: function (e) {
+                        alert("Không thể thêm giỏ hàng ! Hãy kiểm tra lại");
+                        console.log("ERROR: ", e);
+                    }
+                });
+            });
+
+            $(document).on("click", ".updateCart", function () {
+
+                var Id = $(this).parent().find('input.idd').val();
+                var Quantity = $(this).parent().find('input.quantityy').val();
+
+                var workingObject = $(this);
+                console.log(Quantity);
+                console.log(Id);
+
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8888/api/cart/update?id=" + Id + "&quantity=" + Quantity,
+                    success: function (resultMsg) {
+                        //  resetDataForDelete();
+                        window.location.reload();
+                        alert("Cập nhật mặt hàng thành công");
+                    },
+                    error: function (e) {
+                        alert("Không thể cập nhật giỏ hàng ! Hãy kiểm tra lại");
+                        console.log("ERROR: ", e);
+                    }
+                });
+            });
+
+            // document.querySelectorAll('.input-group.quantity').forEach(function (element) {
+            //     var minusButton = element.querySelector('.btn-minus');
+            //     var plusButton = element.querySelector('.btn-plus');
+            //     var inputField = element.querySelector('input[name="quantity"]');
+
+            //     minusButton.addEventListener('click', function () {
+            //         var currentValue = parseInt(inputField.value);
+
+            //         if (currentValue > 0) {
+            //             inputField.value = currentValue - 1;
+            //         }
+            //     });
+
+            //     plusButton.addEventListener('click', function () {
+            //         var currentValue = parseInt(inputField.value);
+
+            //         inputField.value = currentValue + 1;
+            //     });
+            // });
+
+        })
+    </script>
 </body>
 
 </html>

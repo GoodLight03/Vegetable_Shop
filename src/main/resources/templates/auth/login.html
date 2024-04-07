@@ -36,6 +36,7 @@
 
                                     </div>
                                     <form class="user" th:action="@{/do-login}" method="post">
+                                        <!-- <form class="addOtherForm"> -->
                                         <div class="form-group">
                                             <input type="text" name="username" class="form-control form-control-user"
                                                 id="username" aria-describedby="emailHelp" placeholder="Enter id...">
@@ -52,7 +53,7 @@
                                                     Remember Me</label>
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                                        <button type="submit" class="btn btn-primary btn-user btn-block btnSaveForm">
                                             Login
                                         </button>
                                         <hr>
@@ -79,6 +80,41 @@
     </div>
 
     <div th:replace="~{fragment/fragments :: script}"></div>
+
+    <script>
+        // $(document).on('click', '.btnSaveForm', function (event) {
+        //         event.preventDefault();
+        //         ajaxPost();
+
+
+        //     });
+
+        //     function ajaxPost() {
+        //         // PREPARE FORM DATA
+        //         var formData = new FormData($('.addOtherForm')[0]);
+        //         // DO PUT
+        //         $.ajax({
+        //             type: "POST",
+        //             contentType: "application/json",
+        //             url: "http://localhost:8888/api/auth/login",
+        //             enctype: 'multipart/form-data',
+        //             data: formData,
+        //             processData: false,
+        //             contentType: false,
+        //             cache: false,
+        //             // dataType : 'json',
+        //             success: function (response) {
+        //                 window.location.reload();
+        //                 alert("Login thành công");
+
+        //             },
+        //             error: function (e) {
+        //                 alert("Error!")
+        //                 console.log("ERROR: ", e);
+        //             }
+        //         });
+        //     };
+    </script>
 </body>
 
 </html>

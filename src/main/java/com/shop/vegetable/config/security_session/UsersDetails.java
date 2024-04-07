@@ -1,4 +1,4 @@
-package com.shop.vegetable.config;
+package com.shop.vegetable.config.security_session;
 
 
 import org.springframework.security.core.GrantedAuthority;

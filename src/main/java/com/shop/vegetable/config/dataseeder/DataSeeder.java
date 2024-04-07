@@ -1,4 +1,4 @@
-package com.shop.vegetable.config;
+package com.shop.vegetable.config.dataseeder;
 
 import java.util.HashSet;
 

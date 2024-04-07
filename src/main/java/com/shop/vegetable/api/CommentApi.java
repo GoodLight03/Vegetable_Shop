@@ -22,6 +22,7 @@ import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.service.CommentService;
 import com.shop.vegetable.service.TypeService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 
 public class CommentApi {
@@ -34,12 +35,14 @@ public class CommentApi {
     // }
 
     @GetMapping("/all/{id}")
+    //@Operation(summary = "Get a book by id")
     public ResponseEntity<List<Comment>> findCommentById(@PathVariable long id) {
         return ResponseEntity.ok(commentService.findAll(id));
 
     }
 
     @PostMapping("/save")
+    //@Operation(summary = "Get a book by id")
     public ResponseEntity<Comment> addComment(@RequestBody CommentDto commentdto) {
         Comment mcd = commentService.save(commentdto);
         try {

@@ -25,12 +25,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImple implements ProductService {
-    private final ProductRepository ProductRepository;
+    private final ProductRepository productRepository;
     private final ImageUpload imageUpload;
 
     @Override
     public List<Product> findAll() {
-        return ProductRepository.findAll();
+        return productRepository.findAll();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ProductServiceImple implements ProductService {
             cou.setDescription(coursedto.getDescription());
             cou.setPrice(coursedto.getPrice());
             cou.setType(coursedto.getType());
-            return ProductRepository.save(cou);
+            return productRepository.save(cou);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -57,11 +57,11 @@ public class ProductServiceImple implements ProductService {
 
     @Override
     public void delete(Long id) {
-        Optional<Product> Product = ProductRepository.findById(id);
+        Optional<Product> Product = productRepository.findById(id);
 
         if (Product.isPresent()) {
             Product Product2 = Product.get();
-            ProductRepository.delete(Product2);
+            productRepository.delete(Product2);
         }
 
     }
@@ -69,19 +69,19 @@ public class ProductServiceImple implements ProductService {
     @Override
     public List<Product> findName(String name) {
         // TODO Auto-generated method stub
-        return ProductRepository.findByName(name);
+        return productRepository.findByName(name);
     }
 
     @Override
     public Optional<Product> findById(Long id) {
         // TODO Auto-generated method stub
-        return ProductRepository.findById(id);
+        return productRepository.findById(id);
     }
 
     @Override
     public Product update(MultipartFile imageProduct, ProductDto productDto) {
         try {
-            Product productUpdate = ProductRepository.getReferenceById(productDto.getId());
+            Product productUpdate = productRepository.getReferenceById(productDto.getId());
             if (imageProduct.getBytes().length > 0) {
                 if (imageUpload.checkExist(imageProduct)) {
                     productUpdate.setImage(productUpdate.getImage());
@@ -96,7 +96,7 @@ public class ProductServiceImple implements ProductService {
             productUpdate.setDescription(productDto.getDescription());
             productUpdate.setPrice(productDto.getPrice());
             
-            return ProductRepository.save(productUpdate);
+            return productRepository.save(productUpdate);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -106,7 +106,7 @@ public class ProductServiceImple implements ProductService {
     @Override
     public ProductDto getById(Long id) {
         ProductDto productDto = new ProductDto();
-        Product product = ProductRepository.getById(id);
+        Product product = productRepository.getById(id);
         productDto.setId(product.getId());
         productDto.setName(product.getName());
         productDto.setDescription(product.getDescription());
@@ -119,29 +119,37 @@ public class ProductServiceImple implements ProductService {
     @Override
     public Product getByIdNotDto(Long id) {
         // TODO Auto-generated method stub
-        return  ProductRepository.getById(id);
+        return  productRepository.getById(id);
     }
 
     @Override
     public Page<ProductDto> searchProducts(int pageNo, String keyword) {
-        List<Product> products = ProductRepository.findAllByNameOrDescription(keyword);
+        List<Product> products = productRepository.findAllByNameOrDescription(keyword);
         List<ProductDto> productDtoList = transferData(products);
-        Pageable pageable = PageRequest.of(pageNo, 3);
+        Pageable pageable = PageRequest.of(pageNo, 6);
         Page<ProductDto> dtoPage = toPage(productDtoList, pageable);
         return dtoPage;
     }
 
     @Override
     public List<ProductDto> allProduct() {
-        List<Product> products = ProductRepository.findAll();
+        List<Product> products = productRepository.findAll();
         List<ProductDto> productDtos = transferData(products);
         return productDtos;
     }
 
     @Override
     public Page<ProductDto> getAllProducts(int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo-1, 3);
+        Pageable pageable = PageRequest.of(pageNo-1, 6);
         List<ProductDto> productDtoLists = this.allProduct();
+        Page<ProductDto> productDtoPage = toPage(productDtoLists, pageable);
+        return productDtoPage;
+    }
+
+    @Override
+    public Page<ProductDto> getAllProductsPage(int pageNo,List<ProductDto> productDtoLists) {
+        Pageable pageable = PageRequest.of(pageNo-1, 6);
+      
         Page<ProductDto> productDtoPage = toPage(productDtoLists, pageable);
         return productDtoPage;
     }
@@ -171,6 +179,31 @@ public class ProductServiceImple implements ProductService {
             productDtos.add(productDto);
         }
         return productDtos;
+    }
+
+    @Override
+    public List<Product> findByType(Long id) {
+        return productRepository.findByType(id);
+    }
+
+    @Override
+    public List<ProductDto> findByTypeDto(Long id) {
+        return transferData(productRepository.findByType(id));
+    }
+
+    @Override
+    public List<Product> findByTypeAdmin(Long id) {
+        return productRepository.findByTypeAdmin(id);
+    }
+
+    @Override
+    public List<Product> findAllAdmin() {
+        return productRepository.findAllAdmin();
+    }
+
+    @Override
+    public Product updateEnable(Product product) {
+        return productRepository.save(product);
     }
 
 }
