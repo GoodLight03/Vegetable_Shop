@@ -2,7 +2,7 @@ package com.shop.vegetable.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "userss"
 // ,uniqueConstraints = @UniqueConstraint(columnNames = "username")

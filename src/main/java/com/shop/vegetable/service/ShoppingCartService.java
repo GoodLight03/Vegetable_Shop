@@ -21,6 +21,8 @@ public interface ShoppingCartService {
 
     void deleteCartById(Long id);
 
+    ShoppingCart FindById(Long id);
+
     ShoppingCart getCart(String username);
 
     ShoppingCart saveCart(ShoppingCart shoppingCart);

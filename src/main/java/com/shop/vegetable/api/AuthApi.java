@@ -6,6 +6,7 @@
 
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.http.HttpHeaders;
+// import org.springframework.http.HttpStatus;
 // import org.springframework.http.ResponseCookie;
 // import org.springframework.http.ResponseEntity;
 // import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +19,13 @@
 // import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.RestController;
 
-// import com.shop.vegetable.config.jwt.JwtUtils;
-// import com.shop.vegetable.config.service.UserDetailsImpl;
-// import com.shop.vegetable.dto.LoginRequest;
-// import com.shop.vegetable.dto.response.MessageResponse;
-// import com.shop.vegetable.dto.response.UserInfoResponse;
+
+// import com.shop.vegetable.dto.reponse.MessageResponse;
+// import com.shop.vegetable.dto.reponse.TokenResponse;
+// import com.shop.vegetable.dto.request.LoginRequest;
+// import com.shop.vegetable.dto.request.RegisterRequest;
 // import com.shop.vegetable.service.UserService;
+// import com.shop.vegetable.service.impl.AccountServiceImpl;
 
 // import jakarta.validation.Valid;
 
@@ -31,50 +33,22 @@
 // @RequestMapping("/api/auth")
 // public class AuthApi {
 //     @Autowired
-//     private AuthenticationManager authenticationManager;
+//     private AccountServiceImpl accountService;
 
-//     @Autowired
-//     private JwtUtils jwtUtils;
-
-//     @Autowired
-//     private UserService userService;
-
-//     @PostMapping("/login")
-//     public ResponseEntity<?> login(@Valid @ModelAttribute LoginRequest loginRequest) {
-//         Authentication authentication = authenticationManager
-//                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-//                         loginRequest.getPassword()));
-
-//         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-//         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-//         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-
-//         List<String> roles = userDetails.getAuthorities().stream()
-//                 .map(item -> item.getAuthority())
-//                 .collect(Collectors.toList());
-
-//         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-//                 .body(new UserInfoResponse(userDetails.getId(),
-//                         userDetails.getUsername(),
-//                         // userDetails.getEmail(),
-//                         roles));
-//         // return ResponseEntity.ok(jwtCookie);
+//     @PostMapping("login")
+//     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+//         return new ResponseEntity<>(accountService.logink(loginRequest), HttpStatus.OK);
 //     }
 
-//     // @PostMapping("/register")
-//     // public ResponseEntity<?> register(@Valid @RequestBody CreateUserRequest request){
-      
-//     //     userService.register(request);
-      
-//     //     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+//     @PostMapping("register")
+//     public ResponseEntity<MessageResponse> register(@RequestBody RegisterRequest registerRequest) {
+//         return new ResponseEntity<>(accountService.register(registerRequest), HttpStatus.CREATED);
+//     }
+
+//     // @PostMapping("/logout")
+//     // public ResponseEntity<?> logoutUser() {
+//     //   ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+//     //   return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+//     //       .body(new MessageResponse("You've been logout!"));
 //     // }
-
-//     @PostMapping("/logout")
-//     public ResponseEntity<?> logoutUser() {
-//       ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-//       return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
-//           .body(new MessageResponse("You've been logout!"));
-//     }
 // }

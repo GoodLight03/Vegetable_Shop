@@ -8,10 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.shop.vegetable.entity.Role;
 import com.shop.vegetable.entity.Users;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsersDetails implements UserDetails {
     private Users user;
 

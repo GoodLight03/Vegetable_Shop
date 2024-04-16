@@ -335,4 +335,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public ShoppingCart saveCart(ShoppingCart shoppingCart) {
        return cartRepository.save(shoppingCart);
     }
+
+    @Override
+    public ShoppingCart FindById(Long id) {
+        return cartRepository.findById(id).get();
+    }
 }

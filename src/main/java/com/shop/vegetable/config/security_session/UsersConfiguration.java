@@ -22,7 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class UsersConfiguration {
 
         @Autowired
-	private SimpleAuthenticationSuccessHandler successHandler;
+	private AuthenticationSuccessHandler successHandler;
 
         @Bean
         public UserDetailsService userDetailsService() {
@@ -64,8 +64,8 @@ public class UsersConfiguration {
                         )
                         .formLogin(login -> login.loginPage("/login")
                                         .loginProcessingUrl("/do-login")
-                                        //.successHandler(new SimpleAuthenticationSuccessHandler())
-                                        .defaultSuccessUrl("/", true)
+                                        .successHandler(successHandler)
+                                        //.defaultSuccessUrl("/", true)
                                         .permitAll())
                         .logout(logout -> logout.invalidateHttpSession(true)
                                         .clearAuthentication(true)

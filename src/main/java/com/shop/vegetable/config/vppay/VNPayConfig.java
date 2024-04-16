@@ -1,48 +1,41 @@
 package com.shop.vegetable.config.vppay;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import jakarta.servlet.http.HttpServletRequest;
-
-public class Config {
+@Component
+public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/vnpay_jsp/vnpay_return.jsp";
-    public static String vnp_TmnCode = "NHF9106H";
-    public static String vnp_HashSecret = "FXPNKEKRFXIODZJWIAKGKQHIAJUMWHBJ";
-    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+    public static String vnp_Returnurl = "/vnpay-payment";
+    public static String vnp_TmnCode = "7DMBJOTX";
+    public static String vnp_HashSecret = "PBUHRNULLWMBTURDOAUKHYIVKAIAOUNM";
+    public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
-    public static String vnp_Version = "2.1.0";
-    public static String vnp_Command = "pay";
-
-    // public static String md5(String message) {
-    //     String digest = null;
-    //     try {
-    //         MessageDigest md = MessageDigest.getInstance("MD5");
-    //         byte[] hash = md.digest(message.getBytes("UTF-8"));
-    //         StringBuilder sb = new StringBuilder(2 * hash.length);
-    //         for (byte b : hash) {
-    //             sb.append(String.format("%02x", b & 0xff));
-    //         }
-    //         digest = sb.toString();
-    //     } catch (UnsupportedEncodingException ex) {
-    //         digest = "";
-    //     } catch (NoSuchAlgorithmException ex) {
-    //         digest = "";
-    //     }
-    //     return digest;
-    // }
+    public static String md5(String message) {
+        String digest = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hash = md.digest(message.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder(2 * hash.length);
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b & 0xff));
+            }
+            digest = sb.toString();
+        } catch (UnsupportedEncodingException ex) {
+            digest = "";
+        } catch (NoSuchAlgorithmException ex) {
+            digest = "";
+        }
+        return digest;
+    }
 
     public static String Sha256(String message) {
         String digest = null;
@@ -82,7 +75,7 @@ public class Config {
         }
         return hmacSHA512(vnp_HashSecret,sb.toString());
     }
-    
+
     public static String hmacSHA512(final String key, final String data) {
         try {
 
@@ -105,13 +98,13 @@ public class Config {
             return "";
         }
     }
-    
+
     public static String getIpAddress(HttpServletRequest request) {
         String ipAdress;
         try {
             ipAdress = request.getHeader("X-FORWARDED-FOR");
             if (ipAdress == null) {
-                ipAdress = request.getRemoteAddr();
+                ipAdress = request.getLocalAddr();
             }
         } catch (Exception e) {
             ipAdress = "Invalid IP:" + e.getMessage();

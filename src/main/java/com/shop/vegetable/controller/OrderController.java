@@ -1,9 +1,11 @@
 package com.shop.vegetable.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.shop.vegetable.config.vppay.VNPayService;
 import com.shop.vegetable.dto.UserDto;
 import com.shop.vegetable.entity.Order;
 import com.shop.vegetable.entity.OrderDetail;
@@ -38,6 +41,9 @@ public class OrderController {
 
     private final ShoppingCartService cartService;
     private final UserService userService;
+
+    @Autowired
+    private VNPayService vnPayService;
 
     @GetMapping("/check-out")
     public String checkOut(Principal principal, Model model) {
@@ -136,21 +142,48 @@ public class OrderController {
     @RequestMapping(value = "/add-order", method = { RequestMethod.POST })
     public String createOrder(Principal principal,
             Model model,
-            HttpSession session,RedirectAttributes attributes) {
+            HttpSession session, RedirectAttributes attributes, HttpServletRequest request) {
         if (principal == null) {
             return "redirect:/login";
         } else {
             Users Users = usersService.findByUsername(principal.getName());
             ShoppingCart cart = Users.getCart();
+            // Order order = orderService.save(cart);
+            // session.removeAttribute("totalItems");
+            // model.addAttribute("order", order);
+            // model.addAttribute("title", "Order Detail");
+            // model.addAttribute("page", "Order Detail");
+            // attributes.addFlashAttribute("success", "You have placed your order
+            // successfully, thank you!");
+            // return "redirect:/orders";
+            String infor = cart.getId().toString();
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnPayService.createOrder((int) cart.getTotalPrice(), infor, baseUrl);
+            return "redirect:" + vnpayUrl;
+        }
+    }
+
+    @GetMapping("/vnpay-payment")
+    public String GetMapping(HttpServletRequest request, Model model, HttpSession session,
+            RedirectAttributes attributes) {
+        int paymentStatus = vnPayService.orderReturn(request);
+
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String paymentTime = request.getParameter("vnp_PayDate");
+        String transactionId = request.getParameter("vnp_TransactionNo");
+        String totalPrice = request.getParameter("vnp_Amount");
+
+        model.addAttribute("orderId", orderInfo);
+        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("paymentTime", paymentTime);
+        model.addAttribute("transactionId", transactionId);
+        if (paymentStatus == 1) {
+            ShoppingCart cart = cartService.FindById(Long.parseLong(orderInfo));
             Order order = orderService.save(cart);
             session.removeAttribute("totalItems");
-            model.addAttribute("order", order);
-            model.addAttribute("title", "Order Detail");
-            model.addAttribute("page", "Order Detail");
-            //model.addAttribute("success", "Add order successfully");
-            attributes.addFlashAttribute("success", "You have placed your order successfully, thank you!");
-            return "redirect:/orders";
+            return "client/ordersuccess";
         }
+        return "client/orderfail";
     }
 
     @GetMapping("/order-detail")
