@@ -108,7 +108,7 @@
                 <div class="modal-body addTypee">
                     <!-- <form th:action="@{/save-type}" method="post" th:object="${courseDto}"
                         enctype="multipart/form-data"> -->
-                    <form>
+                    <form class="taiKhoanForm">
                         <div class="form-group">
                             <label for="name" class="col-form-label">Type Name:</label>
                             <!-- <input type="text" class="form-control" id="name" th:field="*{name}" name="name"> -->
@@ -190,7 +190,7 @@
             function ajaxGetF(key) {
                 $.ajax({
                     type: "GET",
-                    url: "http://localhost:8888/api/type/find/"+key,
+                    url: "http://localhost:8888/api/type/find/" + key,
                     success: function (result) {
                         $.each(result, function (i, danhMuc) {
                             var danhMucRow = '<tr style="text-align: center;">' +
@@ -212,7 +212,7 @@
                 });
             };
 
-            
+
             $(document).on("click", ".btnXoaDanhMuc", function () {
 
                 var danhMucId = $(this).parent().find('input').val();
@@ -302,15 +302,30 @@
                 }
                 // DO PUT
                 $.ajax({
-                    async: false,
+                    async: true,
                     type: "POST",
                     contentType: "application/json",
                     url: "http://localhost:8888/api/type/save",
                     data: JSON.stringify(formData),
                     // dataType : 'json',
                     success: function (response) {
-                        window.location.reload();
-                        alert("Thêm thành công");
+                        // window.location.reload();
+                        console.log(response);
+                        // alert("Thêm thành công");
+                        if (response.status == "success") {
+                            //$('#taiKhoanModal').modal('hide');
+                            window.location.reload();
+                            alert("Thêm thành công");
+                            console.log("OK");
+                        } else {
+                            $('.taiKhoanForm input').next().remove();
+                            console.log("NOt OK");
+                            $.each(response.errorMessages, function (key, value) {
+                                if (key != "id") {
+                                    $('.taiKhoanForm input[name=' + key + ']').after('<div class="alert alert-danger" role="alert">' + value + '</div>');
+                                };
+                            });
+                        }
 
                     },
                     error: function (e) {
@@ -319,6 +334,32 @@
                     }
                 });
             };
+
+            // event khi ẩn modal form
+            $('#exampleAddCategoryModal').on('hidden.bs.modal', function (e) {
+                e.preventDefault();
+                $('.taiKhoanForm input').next().remove();
+                $('.taiKhoanForm input').next().remove();
+            });
+
+            // (function ($) {
+            //     $.fn.serializeFormJSON = function () {
+
+            //         var o = {};
+            //         var a = this.serializeArray();
+            //         $.each(a, function () {
+            //             if (o[this.name]) {
+            //                 if (!o[this.name].push) {
+            //                     o[this.name] = [o[this.name]];
+            //                 }
+            //                 o[this.name].push(this.value || '');
+            //             } else {
+            //                 o[this.name] = this.value || '';
+            //             }
+            //         });
+            //         return o;
+            //     };
+            // })(jQuery);
 
         });
     </script>

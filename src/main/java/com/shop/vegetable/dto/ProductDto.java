@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.vegetable.entity.Type;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductDto implements Serializable{
     private Long id;
-    // @Size(min = 3, max = 10, message = "User name contains 3-10 characters")
+    @Size(min = 3, max = 10, message = "User name contains 3-10 characters")
     private String name;
     private String description;
     private float price;

@@ -2,6 +2,7 @@ package com.shop.vegetable.api;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,9 +50,10 @@ public class TypeApi {
     }
 
     // @GetMapping("/find")
-    // public ResponseEntity<?> findAllTypeHi(@RequestParam(value="key",required = false) String key) {
-    //     List<Type> lt = typeService.findCourses(key);
-    //     return ResponseEntity.ok(lt);
+    // public ResponseEntity<?> findAllTypeHi(@RequestParam(value="key",required =
+    // false) String key) {
+    // List<Type> lt = typeService.findCourses(key);
+    // return ResponseEntity.ok(lt);
     // }
 
     @GetMapping("/find/{key}")
@@ -73,20 +75,43 @@ public class TypeApi {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Type> addType(@RequestBody TypeDto typeDto) {
-        Type mcd = typeService.save(typeDto);
-        try {
-            return ResponseEntity.created(new URI("/api/type/save/" + mcd.getId())).body(mcd);
-
-        } catch (URISyntaxException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    public ResponseEntity<ResponseObject> addType(@RequestBody @Valid TypeDto typeDto, BindingResult result) {
+        ResponseObject ro = new ResponseObject();
+        if (result.hasErrors()) {
+            setErrorsForResponseObject(result, ro);
+        } else {
+            ro.setStatus("success");
+            typeService.save(typeDto);
         }
+        return ResponseEntity.ok(ro);
+        // Type mcd = typeService.save(typeDto);
+        // try {
+        //     return ResponseEntity.created(new URI("/api/type/save/" + mcd.getId())).body(mcd);
+
+        // } catch (URISyntaxException e) {
+        //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        // }
+    }
+
+    public void setErrorsForResponseObject(BindingResult result, ResponseObject object) {
+
+        Map<String, String> errors = result.getFieldErrors().stream()
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+        object.setErrorMessages(errors);
+        object.setStatus("fail");
+
+        List<String> keys = new ArrayList<String>(errors.keySet());
+        for (String key : keys) {
+            System.out.println(key + ": " + errors.get(key));
+        }
+
+        errors = null;
     }
 
     @PutMapping("/update")
     public ResponseEntity<?> updateType(@RequestBody TypeDto type) {
         try {
-            Type type2=new Type();
+            Type type2 = new Type();
             type2.setId(type.getId());
             type2.setName(type.getName());
             typeService.update(type2);
@@ -94,9 +119,8 @@ public class TypeApi {
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
-       
-    }
 
+    }
 
     @DeleteMapping(path = "/all/{id}")
     public ResponseEntity<Void> deleteTypeById(@PathVariable long id) {
