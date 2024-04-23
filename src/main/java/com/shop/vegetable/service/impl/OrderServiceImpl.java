@@ -145,6 +145,24 @@ public class OrderServiceImpl implements OrderService {
        return orderRepository.getOrderByMonthvsYear();
     }
 
+    @Override
+    public void updateStatus(Long id, String status,Long idShip) {
+        Order order=orderRepository.findById(id).get();
+        order.setOrderStatus(status);
+        order.setIdShip(idShip);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public Order findbyId(Long id) {
+       return orderRepository.findById(id).get();
+    }
+
+    @Override
+    public List<Order> findAllByShipperId(Long id) {
+        return orderRepository.findAllByShipperId(id);
+    }
+
     
 
 }

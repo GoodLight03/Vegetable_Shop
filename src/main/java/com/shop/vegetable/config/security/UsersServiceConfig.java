@@ -1,4 +1,4 @@
-package com.shop.vegetable.config.security_session;
+package com.shop.vegetable.config.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

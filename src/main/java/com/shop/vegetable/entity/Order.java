@@ -28,7 +28,7 @@ public class Order {
     private int quantity;
     private String paymentMethod;
     private boolean isAccept;
-
+    private Long idShip;
     // @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id", referencedColumnName = "users_id")
@@ -37,6 +37,9 @@ public class Order {
     // @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderDetail> orderDetailList;
+    @JsonBackReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+    private List<OrderProcess> orderProcesses;
 
     @Override
     public String toString() {

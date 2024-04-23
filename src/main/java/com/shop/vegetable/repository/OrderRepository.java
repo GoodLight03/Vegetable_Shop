@@ -23,4 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "ORDER BY YEAR(o.orderDate), MONTH(o.orderDate)")
     public List<Object> getOrderByMonthvsYear();
 
+    @Query("select o from Order o where o.idShip = ?1")
+    List<Order> findAllByShipperId(Long id);
+
 }

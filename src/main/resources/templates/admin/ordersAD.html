@@ -255,7 +255,31 @@
         </div>
     </div>
     <!-- End of Page Wrapper -->
-
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Type</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- <form th:action="@{/update-type}" method="put"> -->
+                    <form>
+                        <div class="form-group">
+                            <label for="idEdit" class="col-form-label">ID Order
+                            </label> <input type="text" class="form-control" id="idEdit" name="id" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="nameEdit" class="col-form-label">Shipper Name
+                                Name</label> <select class="form-control shipper"></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btnUpdateForm">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Scroll to Top Button-->
     <a th:replace="~{fragment/fragments::scroll}"></a>
     <!-- End -->
@@ -268,6 +292,7 @@
         $(document).ready(function () {
 
             ajaxGet();
+            ajaxGetShipper();
 
             function ajaxGet() {
                 $.ajax({
@@ -284,12 +309,15 @@
                                 '<td>' + danhMuc.users.address + '</td>' +
                                 '<td><p style="color: red">$' + danhMuc.totalPrice + '</p></td>' +
                                 '<td>' + danhMuc.paymentMethod + '</td>' +
-                                '<td>' + '<a href="/order-detail?id=' + danhMuc.id + '" class="button-cancel">Detail</a>' + '</td>' +
-                                // '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
-                                // + '<button class="btn btn-primary btnCapNhatDanhMuc" >Cập nhật</button>' +
-                                // '   <button class="btn btn-danger btnXoaDanhMuc">Xóa</button></td>'
-                                '</tr>';
+                                '<td>' + '<a href="/order-detail?id=' + danhMuc.id + '" class="button-cancel">Detail</a>' + '</td>';
 
+                            if (danhMuc.orderStatus == 'Pending') {
+                                danhMucRow +=
+                                    '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                    + '<button class="btn btn-primary btnCapNhatDanhMuc" >Confirm</button>' +
+                                    '<button class="btn btn-danger btnXoaDanhMuc">Cancel</button></td>';
+                            }
+                            danhMucRow += '</tr>';
 
                             // $('.tblType tbody').append(danhMucRow);
                             $('.tblType tbody').append(danhMucRow);
@@ -298,11 +326,90 @@
 
                     },
                     error: function (e) {
-                        alert("Error: ", e);
+                        alert("Error List: ", e);
                         console.log("Error", e);
                     }
                 });
             };
+        });
+
+        function ajaxGetShipper() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8888/api/user/all/role?namerole=SHIPPER",
+                success: function (result) {
+                    $.each(result, function (i, danhMuc) {
+                        var danhMucRow = '<option width="20%" value=' + danhMuc.id + '>' + danhMuc.username + '</option>';
+                        $('.shipper').append(danhMucRow);
+                    });
+                },
+                error: function (e) {
+                    alert("Error Shipper: ", e);
+                    console.log("Error", e);
+                }
+            });
+        };
+
+        $(document).on('click', '.btnUpdateForm', function (event) {
+            event.preventDefault();
+            var danhMucId = $(this).parent().find('input').val();
+            // var formData = {
+            //     status: '',
+            // }
+            console.log(danhMucId);
+            $.ajax({
+                async: false,
+                type: "PATCH",
+                contentType: "application/json",
+                url: "http://localhost:8888/api/order/all/" + $('#idEdit').val() + '?status=Confirmed&idShip=' + $('.shipper').val(),
+                //data: JSON.stringify(formData),
+                // dataType : 'json',
+                success: function (response) {
+                    window.location.reload();
+                    alert("Xác nhận thành công");
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Error!" + error);
+                    console.log("ERROR: ", error);
+                }
+            });
+
+        });
+
+        $(document).on("click", ".btnXoaDanhMuc", function () {
+            event.preventDefault();
+            var danhMucId = $(this).parent().find('input').val();
+            // var formData = {
+            //     status: '',
+            // }
+            console.log(danhMucId);
+            $.ajax({
+                async: false,
+                type: "PATCH",
+                contentType: "application/json",
+                url: "http://localhost:8888/api/order/all/" + danhMucId + '?status=Cancelled',
+                //data: JSON.stringify(formData),
+                // dataType : 'json',
+                success: function (response) {
+                    window.location.reload();
+                    alert("Hủy thành công");
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Error!" + error);
+                    console.log("ERROR: ", error);
+                }
+            });
+        });
+
+        $(document).on("click", ".btnCapNhatDanhMuc", function () {
+            event.preventDefault();
+            var danhMucId = $(this).parent().find('input').val();
+            console.log(danhMucId);
+            $('#idEdit').val(danhMucId);
+            console.log($('.shipper').val());
+            $('#editModal').modal();
         });
 
         window.onload = function () {

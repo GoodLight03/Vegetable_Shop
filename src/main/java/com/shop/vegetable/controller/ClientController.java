@@ -124,9 +124,35 @@ public class ClientController {
   // }
 
   @GetMapping("/admin")
-  public String ad(Model model) {
+  public String ad(Model model,Principal principal) {
+    if (principal != null) {
+      model.addAttribute("namelogin", principal.getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
+      }
+    }
+    
     model.addAttribute("currentPages", "admin");
     return "admin/indexAd";
+
+  }
+
+  @GetMapping("/shipper")
+  public String sh(Model model,Principal principal) {
+    if (principal != null) {
+      model.addAttribute("namelogin", principal.getName());
+      Users users = userService.findByUsername(principal.getName());
+      List<Role> roles = users.getRoles();
+      if (roles.size() == 1) {
+        model.addAttribute("rolelogin", roles.get(0).getName());
+      }
+      model.addAttribute("iShip", users.getId());
+    }
+    
+    model.addAttribute("currentPages", "shipper");
+    return "shipper/shipper";
 
   }
 

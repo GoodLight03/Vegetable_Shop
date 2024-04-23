@@ -3,12 +3,13 @@ package com.shop.vegetable.service.impl;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.shop.vegetable.dto.UserDto;
-
+import com.shop.vegetable.entity.Role;
 import com.shop.vegetable.entity.Users;
 import com.shop.vegetable.repository.RoleRepository;
 import com.shop.vegetable.repository.UsersRepository;
@@ -31,9 +32,11 @@ public class UserServiceImple implements UserService{
         user.setAddress(userDto.getAddress());
         user.setPhone(userDto.getPhone());
         user.setPassword(userDto.getPassword());
-        user.setRoles(Arrays.asList(roleRepository.findByName("CUSTOMER")));
+        user.setRoles(Arrays.asList(roleRepository.findByName(userDto.getRole())));
         return userRepository.save(user);
     }
+
+    
 
     @Override
     public Users saveAD() {
@@ -93,6 +96,18 @@ public class UserServiceImple implements UserService{
         }
         userRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public List<Users> findByRole(List<Role> roles) {
+        return userRepository.findByRoles(roles);
+    }
+
+
+
+    @Override
+    public Users findbyId(Long id) {
+        return userRepository.findById(id).get();
     }
 
 }

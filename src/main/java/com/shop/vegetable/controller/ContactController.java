@@ -77,8 +77,11 @@ public class ContactController {
       lh.setUsers(users);
       lh.setStatus("Chưa trả lời");
 		  contactService.save(lh);
-      redirectAttributes.addAttribute("success", "Sent contact Success!");
-      return "redirect:" + request.getHeader("Referer");
+      //redirectAttributes.addAttribute("success", "Sent contact Success!");
+      //return "redirect:" + request.getHeader("Referer");
+
+      redirectAttributes.addFlashAttribute("success", "Send contact successfully!");
+      return "redirect:/contact";
     } 
 		return "auth/login";
 		

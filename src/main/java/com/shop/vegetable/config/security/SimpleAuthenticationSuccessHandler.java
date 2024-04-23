@@ -1,4 +1,4 @@
-package com.shop.vegetable.config.security_session;
+package com.shop.vegetable.config.security;
 
 import java.io.IOException;
 import java.util.Collection;

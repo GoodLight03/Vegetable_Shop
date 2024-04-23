@@ -21,5 +21,6 @@ public class UserDto {
     @Size(min = 3, max = 15, message = "Password contains 3-10 characters")
     private String password;
     private String repeatPassword;
+    private String role;
 
 }

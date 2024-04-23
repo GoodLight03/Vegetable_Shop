@@ -47,5 +47,8 @@ public class Users {
     @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private List<Contact> contacts;
+    @JsonBackReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
+    private List<OrderProcess> orderProcesses;
 
 }

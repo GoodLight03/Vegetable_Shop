@@ -69,6 +69,7 @@ public class AuthController {
             }
             if (adminDto.getPassword().equals(adminDto.getRepeatPassword())) {
                 adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
+                adminDto.setRole("CUSTOMER");
                 adminService.save(adminDto);
                 // System.out.println("success");
                 // model.addAttribute("success", "Register successfully!");
