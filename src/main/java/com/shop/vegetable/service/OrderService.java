@@ -32,5 +32,7 @@ public interface OrderService {
 
     List<Order> findAllByShipperId(Long id);
 
+    List<Order> findAllByStatus(Long id, String status);
+
     void exportToExcel(List<Order> objectList, HttpServletResponse response) throws IOException;
 }

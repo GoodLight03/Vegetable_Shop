@@ -280,6 +280,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="tableOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Type</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- <form th:action="@{/update-type}" method="put"> -->
+                    <table>
+                        <thead>
+
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Scroll to Top Button-->
     <a th:replace="~{fragment/fragments::scroll}"></a>
     <!-- End -->
@@ -309,14 +331,14 @@
                                 '<td>' + danhMuc.users.address + '</td>' +
                                 '<td><p style="color: red">$' + danhMuc.totalPrice + '</p></td>' +
                                 '<td>' + danhMuc.paymentMethod + '</td>' +
-                                '<td>' + '<a href="/order-detail?id=' + danhMuc.id + '" class="button-cancel">Detail</a>' + '</td>';
+                                '<td>' + '<a href="/order-detail?id=' + danhMuc.id + '" class="button-cancel">Detail</a>' + '</td>'+
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>';
 
                             if (danhMuc.orderStatus == 'Pending') {
-                                danhMucRow +=
-                                    '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
-                                    + '<button class="btn btn-primary btnCapNhatDanhMuc" >Confirm</button>' +
+                                danhMucRow +='<button class="btn btn-primary btnCapNhatDanhMuc" >Confirm</button>' +
                                     '<button class="btn btn-danger btnXoaDanhMuc">Cancel</button></td>';
                             }
+                            //danhMucRow += '<button class="btn btn-danger btnCtietDanhMuc">Detail</button></td></tr>';
                             danhMucRow += '</tr>';
 
                             // $('.tblType tbody').append(danhMucRow);
@@ -410,6 +432,21 @@
             $('#idEdit').val(danhMucId);
             console.log($('.shipper').val());
             $('#editModal').modal();
+        });
+
+        $(document).on("click", ".btnCtietDanhMuc", function () {
+            event.preventDefault();
+            var danhMucId = $(this).parent().find('input').val();
+                // var href = "http://localhost:8888/api/type/all/" + danhMucId;
+                // $.get(href, function (category, status) {
+                //     $('#idEdit').val(category.id);
+                //     $('#nameEdit').val(category.name);
+                //     // $('#titleEdit').val(category.title);
+                // });
+            console.log(danhMucId);
+            $('#idEdit').val(danhMucId);
+            console.log($('.shipper').val());
+            $('#tableOrder').modal();
         });
 
         window.onload = function () {

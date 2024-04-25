@@ -6,5 +6,5 @@ import com.shop.vegetable.entity.OrderProcess;
 
 public interface OrderProcessService {
     OrderProcess save(OrderProcess orderProcess);
-    List<OrderProcess> findbyship(Long id);
+    List<OrderProcess> findbyship(Long id,Long idOr);
 }

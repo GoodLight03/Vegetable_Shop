@@ -163,6 +163,11 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByShipperId(id);
     }
 
+    @Override
+    public List<Order> findAllByStatus(Long id, String status) {
+       return orderRepository.findAllByStatus(id,status);
+    }
+
     
 
 }

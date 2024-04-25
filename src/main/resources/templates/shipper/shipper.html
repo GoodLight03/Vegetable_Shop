@@ -21,7 +21,7 @@
                 <!-- End of Topbar -->
                 <!-- Begin Page Content -->
 
-                <input style="display: none;" type="number" class="form-control" id="nameEdit" name="name" th:value="${iShip}">
+
 
                 <p th:if="${size == 0}">No Order</p>
                 <div th:if="${success}" class="text-center alert alert-success">
@@ -31,13 +31,19 @@
                 <div th:if="${error}" class="text-center alert alert-danger">
                     <p th:text="${error}"></p>
                 </div>
-
-                <select id="my-select" name="type" class="form-control">
-                    <option th:value="null">-All-</option>
-                    <option th:value="null">-Confirmed-</option>
-                    <option th:value="null">-All-</option>
-                </select>
-
+                <div>
+                    <h5>Shipping Order:</h5>
+                    <select id="my-select" name="type" class="form-control" style="width: 300px;">
+                        <option value="All">All</option>
+                        <option value="Chuẩn bị vận chuyển">Chuẩn bị vận chuyển</option>
+                        <option value="Đang vận chuyển">Đang vận chuyển</option>
+                        <option value="Đến điểm giao hàng">Đến điểm giao hàng</option>
+                        <option value="Đang giao hàng">Đang giao hàng</option>
+                        <option value="Giao thành công">Giao thành công</option>
+                        <option value="Giao thành công">Giao thành công</option>
+                        <option value="Giao thất bại">Giao thất bại</option>
+                    </select>
+                </div>
                 <table class="table table-striped tblType">
                     <thead>
                         <tr>
@@ -130,16 +136,34 @@
                 </div>
                 <div class="modal-body">
                     <!-- <form th:action="@{/update-type}" method="put"> -->
-                    <form>
+                    <form class="addOtherForm">
+                        <input style="display: none;" type="number" class="form-control" id="nameEdit" name="idUs"
+                            th:value="${iShip}">
                         <div class="form-group">
                             <label for="idEdit" class="col-form-label">ID Order
-                            </label> <input type="text" class="form-control" id="idEdit" name="id" readonly>
+                            </label> <input type="text" class="form-control" id="idEdit" name="idOr" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="nameEdit" class="col-form-label">Shipper Name
-                                Name</label> <select class="form-control shipper"></select>
+                            <label for="nameEdit" class="col-form-label">
+                                Status</label> <select class="form-control statuss" name="status">
+                                <option>Chuẩn bị vận chuyển</option>
+                                <option>Đang vận chuyển</option>
+                                <option>Đến điểm giao hàng</option>
+                                <option>Đang giao hàng</option>
+                                <option>Giao thành công</option>
+                                <option>Giao thất bại</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nameEdit" class="col-form-label">
+                                Description</label> <textarea class="form-control description"
+                                name="description"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btnUpdateForm">Save</button>
+                        <div class="form-group tblTypeOrder">
+
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -152,19 +176,18 @@
     <div th:replace="~{fragment/fragments::script}"></div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script th:src="@{/js/categories.js}"></script>
     <script>
         $(document).ready(function () {
 
             ajaxGet();
 
             console.log($('#nameEdit').val());
-            
+
             function ajaxGet() {
-                
+
                 $.ajax({
                     type: "GET",
-                    url: "http://localhost:8888/api/order/all?idShip="+$('#nameEdit').val(),
+                    url: "http://localhost:8888/api/order/all?idShip=" + $('#nameEdit').val(),
                     success: function (result) {
                         $.each(result, function (i, danhMuc) {
                             // var clas='my-product-image' + danhMuc.id;
@@ -176,15 +199,9 @@
                                 '<td>' + danhMuc.users.address + '</td>' +
                                 '<td><p style="color: red">$' + danhMuc.totalPrice + '</p></td>' +
                                 '<td>' + danhMuc.paymentMethod + '</td>' +
-                                '<td>' + '<a href="/order-detail?id=' + danhMuc.id + '" class="button-cancel">Detail</a>' + '</td>';
-
-                            if (danhMuc.orderStatus == 'Pending') {
-                                danhMucRow +=
-                                    '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
-                                    + '<button class="btn btn-primary btnCapNhatDanhMuc" >Confirm</button>' +
-                                    '<button class="btn btn-danger btnXoaDanhMuc">Cancel</button></td>';
-                            }
-                            danhMucRow += '</tr>';
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Update</button>' +
+                                '</td></tr>';
 
                             // $('.tblType tbody').append(danhMucRow);
                             $('.tblType tbody').append(danhMucRow);
@@ -198,23 +215,30 @@
                     }
                 });
             };
-        });
+        
 
 
         $(document).on('click', '.btnUpdateForm', function (event) {
             event.preventDefault();
             var danhMucId = $(this).parent().find('input').val();
             // var formData = {
-            //     status: '',
+            //     idUs: $('#nameEdit').val(),
+            //     idOr: $('#idEdit').val(),
+            //     description: $('.description').val(),
+            //     status: $('.statuss').val(),
             // }
-            console.log(danhMucId);
+            var formData = new FormData($('.addOtherForm')[0]);
+            console.log(formData);
             $.ajax({
-                async: false,
-                type: "PATCH",
+                //async: false,
+                type: "POST",
                 contentType: "application/json",
-                url: "http://localhost:8888/api/order/all/" + $('#idEdit').val() + '?status=Confirmed&idShip=' + $('.shipper').val(),
-                //data: JSON.stringify(formData),
-                // dataType : 'json',
+                url: "http://localhost:8888/api/orderprocess/save",
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                //dataType : 'json',
                 success: function (response) {
                     window.location.reload();
                     alert("Xác nhận thành công");
@@ -228,31 +252,7 @@
 
         });
 
-        $(document).on("click", ".btnXoaDanhMuc", function () {
-            event.preventDefault();
-            var danhMucId = $(this).parent().find('input').val();
-            // var formData = {
-            //     status: '',
-            // }
-            console.log(danhMucId);
-            $.ajax({
-                async: false,
-                type: "PATCH",
-                contentType: "application/json",
-                url: "http://localhost:8888/api/order/all/" + danhMucId + '?status=Cancelled',
-                //data: JSON.stringify(formData),
-                // dataType : 'json',
-                success: function (response) {
-                    window.location.reload();
-                    alert("Hủy thành công");
 
-                },
-                error: function (xhr, status, error) {
-                    alert("Error!" + error);
-                    console.log("ERROR: ", error);
-                }
-            });
-        });
 
         $(document).on("click", ".btnCapNhatDanhMuc", function () {
             event.preventDefault();
@@ -260,10 +260,82 @@
             console.log(danhMucId);
             $('#idEdit').val(danhMucId);
             console.log($('.shipper').val());
+            $('.tblTypeOrder').empty();
+
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8888/api/orderprocess/all/" + $('#nameEdit').val() + "/" + danhMucId,
+                success: function (result) {
+                    console.log(result);
+                    $.each(result, function (i, danhMuc) {
+                        // Chuỗi ngày tháng gốc
+                        var processday = danhMuc.processday;
+
+                        // Chuyển đổi thành định dạng mới
+                        var formattedProcessday = processday.slice(0, 10);
+                        // var clas='my-product-image' + danhMuc.id;
+                        var danhMucRow = '<div class="card" style="width: 28rem;">' +
+                            // '<td >' + danhMuc.id + '</td>' +
+                            '<div class="card-body"><h5 class="card-title">Day Update: ' + formattedProcessday + '</h5>' +
+                            '<h6 class="card-title">Status: ' + danhMuc.status + '</h6>' +
+                            '<p class="card-text">' + danhMuc.description + '</p>' +
+                            '</div></div>';
+
+                        // $('.tblType tbody').append(danhMucRow);
+                        $('.tblTypeOrder').append(danhMucRow);
+                    });
+                },
+                error: function (e) {
+                    alert("Error List: ", e);
+                    console.log("Error", e);
+                }
+            });
+
             $('#editModal').modal();
         });
 
+        $('#my-select').on('change', function () {
+                var selectedOption = $(this).val();
+                console.log(selectedOption);
+                var url = 'http://localhost:8888/api/order/status/'+$('#nameEdit').val()+"/"+ encodeURIComponent(selectedOption);;
+                console.log(url);
+                sendSelectedOption(url);
 
+            });
+
+            function sendSelectedOption(url) {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    //data: { id: option },
+                    success: function (result) {
+                        $('.tblType tbody').empty();
+                        $.each(result, function (i, danhMuc) {
+                            var danhMucRow = '<tr>' +
+                                '<td >' + danhMuc.id + '</td>' +
+                                '<td>' + danhMuc.users.username + '</td>' +
+                                '<td>' + danhMuc.orderDate + '</td>' +
+                                '<td>' + danhMuc.orderStatus + '</td>' +
+                                '<td>' + danhMuc.users.address + '</td>' +
+                                '<td><p style="color: red">$' + danhMuc.totalPrice + '</p></td>' +
+                                '<td>' + danhMuc.paymentMethod + '</td>' +
+                                '<td>' + '<input type="hidden" value=' + danhMuc.id + '>'
+                                + '<button class="btn btn-primary btnCapNhatDanhMuc" >Update</button>' +
+                                '</td></tr>';
+
+                            $('.tblType tbody').append(danhMucRow);
+                        });
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.log(error);
+                    }
+                });
+            }
+
+    });
     </script>
 </body>
 

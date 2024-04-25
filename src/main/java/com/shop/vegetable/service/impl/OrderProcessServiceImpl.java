@@ -22,8 +22,8 @@ public class OrderProcessServiceImpl implements OrderProcessService{
        return orderProcessRepository.save(orderProcess);
     }
     @Override
-    public List<OrderProcess> findbyship(Long id) {
-        return orderProcessRepository.findAllByShipperId(id);
+    public List<OrderProcess> findbyship(Long id,Long idOr) {
+        return orderProcessRepository.findAllByShipperId(id,idOr);
 
     }
     

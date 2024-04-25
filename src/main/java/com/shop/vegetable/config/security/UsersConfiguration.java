@@ -58,6 +58,8 @@ public class UsersConfiguration {
                                         .permitAll()
                                         .requestMatchers("/user", "/type", "/eclass", "/product", "/admin","/lstcontact")
                                         .hasAuthority("ADMIN")
+                                        .requestMatchers("/shipper")
+                                        .hasAuthority("SHIPPER")
                                         .anyRequest().permitAll()
                                 // .anyRequest().authenticated()
 

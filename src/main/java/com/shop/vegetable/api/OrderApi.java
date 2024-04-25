@@ -2,9 +2,11 @@ package com.shop.vegetable.api;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shop.vegetable.dto.TypeDto;
+import com.shop.vegetable.dto.reponse.OrderDetailResponse;
 import com.shop.vegetable.entity.Order;
+import com.shop.vegetable.entity.OrderDetail;
 import com.shop.vegetable.entity.OrderProcess;
+import com.shop.vegetable.entity.Product;
 import com.shop.vegetable.entity.ShoppingCart;
 import com.shop.vegetable.entity.Type;
 import com.shop.vegetable.entity.Users;
@@ -44,8 +49,6 @@ public class OrderApi {
     @Autowired
     private OrderProcessService orderProcessService;
 
-    
-
     @GetMapping("/all")
     public ResponseEntity<?> findAllOrder(@RequestParam(value = "idShip", required = false) Long idShip) {
         if(idShip!=null){
@@ -54,17 +57,37 @@ public class OrderApi {
         return ResponseEntity.ok(orderService.findALlOrders());
     }
 
-    // @GetMapping("/all/{id}")
-    // public ResponseEntity<Type> findTypeById(@PathVariable long id) {
-    //     Optional<Type> m = typeService.findById(id);
-    //     if (m.isPresent()) {
-    //         return ResponseEntity.ok(m.get());
-    //     } else {
-    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<OrderDetailResponse> findTypeById(@PathVariable long id) {
+        OrderDetailResponse orderDetailResponse=new OrderDetailResponse();
+        
+        List<Order> orders=orderService.findALlOrders();
+        
+        Order ordersf=orders.stream()
+        .filter(order -> order.getId() == id)
+        .findFirst()
+        .orElse(null);  
+        
+        if (ordersf!=null) {
+            List<OrderDetail> orderDetails = orderService.AllOrderDetail(ordersf.getId());
+            orderDetailResponse.setOrder(ordersf);
+            List<Product> products =new ArrayList<>();
 
-    //     }
+            for (OrderDetail order : orderDetails) {
+                products.add(order.getProduct());
+            }
+            // List<Product> products = orderDetails.stream()
+            //                          .map(OrderDetail::getProduct)
+            //                          .collect(Collectors.toList());
 
-    // }
+            orderDetailResponse.setOrderDetails(products);
+            return ResponseEntity.ok(orderDetailResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        }
+
+    }
 
     @PostMapping("/save")
     public ResponseEntity<Order> addOrder(@RequestBody ShoppingCart shoppingCart) {
@@ -77,15 +100,14 @@ public class OrderApi {
         }
     }
 
-    // @PutMapping("/all/{id}")
-    // public ResponseEntity<Void> updateType(@RequestBody Type type, @PathVariable long id) {
-    //     try {
-    //         orderService.update(type);
-    //         return ResponseEntity.ok().build();
-    //     } catch (EntityNotFoundException ex) {
-    //         return ResponseEntity.notFound().build();
-    //     }
-    // }
+    @GetMapping("/status/{idShip}/{status}")
+    public ResponseEntity<?> updateType(@PathVariable long idShip, @PathVariable String status) {  
+        if(status.equals("All")){
+            return ResponseEntity.ok(orderService.findAllByShipperId(idShip));
+        }
+        return ResponseEntity.ok(orderService.findAllByStatus(idShip,status));
+       
+    }
 
     @PatchMapping("/all/{id}")
     public ResponseEntity<Void> updateStatus(@RequestParam String status,@RequestParam(value = "idShip", required = false) Long idShip, @PathVariable long id) {

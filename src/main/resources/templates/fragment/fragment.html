@@ -80,6 +80,13 @@
                                 <a href="/logout" class="dropdown-item">Logout</a>
                             </div>
                         </div>
+                        <div class="nav-item dropdown" th:if="${rolelogin}==SHIPPER">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="${namelogin}"></a>
+                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a href="/shipper" class="dropdown-item">Manager Transport</a>
+                                <a href="/logout" class="dropdown-item">Logout</a>
+                            </div>
+                        </div>
                         <div class="nav-item dropdown" th:if="${rolelogin}==CUSTOMER">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" th:text="${namelogin}"></a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">

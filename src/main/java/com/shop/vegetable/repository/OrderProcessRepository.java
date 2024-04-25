@@ -10,6 +10,6 @@ import com.shop.vegetable.entity.OrderProcess;
 
 @Repository
 public interface OrderProcessRepository extends JpaRepository<OrderProcess, Long> {
-    @Query("select o from OrderProcess o where o.users.id = ?1")
-    List<OrderProcess> findAllByShipperId(Long id);
+    @Query("select o from OrderProcess o where o.users.id = ?1 and o.order.id= ?2")
+    List<OrderProcess> findAllByShipperId(Long id,Long idOr);
 }
